@@ -1,0 +1,1891 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>大J私教 · 专业私人健身</title>
+  <style>
+    :root {
+      --bg-main: #0c0e14;
+      --bg-card: #151923;
+      --bg-elevated: #1e2433;
+      --emerald: #10b981;
+      --emerald-bright: #34d399;
+      --emerald-glow: rgba(16, 185, 129, 0.25);
+      --amber: #f59e0b;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-main);
+      color: var(--text-primary);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
+      overflow: hidden;
+    }
+
+    .app-shell {
+      width: 100%;
+      height: 100%;
+      max-width: 460px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      background: #10131c;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Top Header */
+    .top-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: rgba(16, 19, 28, 0.92);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+      z-index: 20;
+    }
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--emerald);
+      box-shadow: 0 0 10px var(--emerald);
+    }
+    .brand-title {
+      font-size: 17px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+    }
+    .pro-pill {
+      background: rgba(16, 185, 129, 0.14);
+      color: var(--emerald-bright);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+    }
+
+    /* Views */
+    .view {
+      flex: 1;
+      display: none;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+    .view.active {
+      display: flex;
+    }
+
+    /* Home View */
+    .home-scroll {
+      flex: 1;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 14px 16px 100px;
+    }
+
+    .hero-card {
+      background: linear-gradient(145deg, #1b2234 0%, #131824 100%);
+      border-radius: 20px;
+      padding: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      margin-bottom: 14px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+    }
+    .hero-title {
+      font-size: 20px;
+      font-weight: 900;
+      margin-bottom: 6px;
+      color: #ffffff;
+    }
+    .hero-sub {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 14px;
+    }
+
+    .toolbar-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .plan-tabs {
+      display: flex;
+      background: #0d1017;
+      padding: 3px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .plan-tab {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 11px;
+      border-radius: 9px;
+      cursor: pointer;
+    }
+    .plan-tab.active {
+      background: var(--bg-elevated);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    .add-ex-btn {
+      border: none;
+      background: rgba(16, 185, 129, 0.16);
+      color: var(--emerald-bright);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 7px 12px;
+      border-radius: 11px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    .ex-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+    .ex-item {
+      background: var(--bg-card);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 15px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .ex-item-left {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      flex: 1;
+      min-width: 0;
+      cursor: pointer;
+    }
+    .ex-num {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: rgba(16, 185, 129, 0.14);
+      color: var(--emerald-bright);
+      font-size: 13px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .ex-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .ex-info-top {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 3px;
+    }
+    .ex-name {
+      font-size: 14.5px;
+      font-weight: 800;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ex-badge {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 6px;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--emerald-bright);
+      flex-shrink: 0;
+    }
+    .ex-badge.timed {
+      background: rgba(245, 158, 11, 0.16);
+      color: #fbbf24;
+    }
+    .ex-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .ex-actions {
+      display: flex;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.08);
+      background: var(--bg-elevated);
+      color: #cbd5e1;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .bottom-cta-wrap {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 14px 18px 22px;
+      background: linear-gradient(180deg, rgba(16,19,28,0) 0%, rgba(16,19,28,0.95) 35%, #10131c 100%);
+      z-index: 25;
+    }
+    .go-btn {
+      width: 100%;
+      padding: 16px;
+      border-radius: 16px;
+      border: none;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #04130d;
+      font-size: 17px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    }
+    .go-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* ================= WORKOUT PLAYER VIEW ================= */
+    .player-top-header {
+      padding: 14px 18px 12px;
+      background: rgba(21, 25, 35, 0.95);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+      z-index: 15;
+    }
+    .player-step-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+    .player-step-tag {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--emerald-bright);
+      letter-spacing: 0.6px;
+    }
+    .back-list-btn {
+      background: rgba(255, 255, 255, 0.08);
+      color: #cbd5e1;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 8px;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .player-ex-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+      margin-bottom: 4px;
+      line-height: 1.25;
+    }
+    .player-ex-desc {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+
+    /* Center Stage Canvas */
+    .player-stage {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #F8FAFC;
+      overflow: hidden;
+    }
+    #coachCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: #F8FAFC;
+    }
+
+    /* Countdown 3-2-1-GO Overlay */
+    .countdown-layer {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(2px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 25;
+      pointer-events: none;
+    }
+    .countdown-num {
+      font-size: 112px;
+      font-weight: 900;
+      font-style: italic;
+      color: var(--emerald-bright);
+      line-height: 1;
+    }
+    .countdown-label {
+      margin-top: 8px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 1px;
+    }
+
+    /* Voice Announcing Pill */
+    .announce-pill {
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #0f172a;
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #ecfdf5;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      white-space: nowrap;
+      z-index: 20;
+      display: none;
+    }
+
+    /* Bottom Control Bar */
+    .player-footer {
+      padding: 16px 18px 24px;
+      background: #151923;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      z-index: 20;
+    }
+    .ctrl-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .ctrl-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: #1f2637;
+      color: #ffffff;
+      font-size: 17px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .ctrl-btn.pause-main {
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      background: #ffffff;
+      color: #0f172a;
+      font-size: 20px;
+    }
+    .ctrl-btn.pause-main.paused {
+      background: var(--emerald);
+      color: #04130d;
+    }
+
+    .progress-box {
+      flex: 1;
+      height: 54px;
+      background: #1f2637;
+      border-radius: 16px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .progress-box.ding-flash {
+      transform: scale(1.03);
+      box-shadow: 0 0 22px rgba(16, 185, 129, 0.5);
+      border-color: var(--emerald-bright);
+    }
+    .progress-fill-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0%;
+      background: linear-gradient(90deg, rgba(16, 185, 129, 0.38) 0%, rgba(16, 185, 129, 0.65) 100%);
+      transition: width 0.25s ease-out;
+    }
+    .progress-main-val {
+      position: relative;
+      z-index: 2;
+      font-size: 22px;
+      font-weight: 900;
+      color: #ffffff;
+      font-variant-numeric: tabular-nums;
+    }
+    .progress-sub-lbl {
+      position: relative;
+      z-index: 2;
+      font-size: 11px;
+      font-weight: 700;
+      color: #cbd5e1;
+    }
+
+    /* Modal Sheet for Add/Edit */
+    .modal-mask {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.68);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      z-index: 60;
+    }
+    .modal-mask.open {
+      display: flex;
+    }
+    .modal-sheet {
+      width: 100%;
+      background: #171c28;
+      border-top-left-radius: 24px;
+      border-top-right-radius: 24px;
+      padding: 18px 18px 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .sheet-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .field-group label {
+      display: block;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 5px;
+      font-weight: 700;
+    }
+    .field-input, .field-select {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #0e121a;
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 600;
+    }
+    .mode-pills {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .mode-pill {
+      padding: 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #0e121a;
+      color: var(--text-secondary);
+      font-size: 12.5px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .mode-pill.active {
+      background: rgba(16, 185, 129, 0.18);
+      border-color: var(--emerald);
+      color: var(--emerald-bright);
+    }
+    .sheet-save-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      border: none;
+      background: var(--emerald);
+      color: #04130d;
+      font-size: 15px;
+      font-weight: 900;
+      margin-top: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Top Brand Header -->
+    <div class="top-nav">
+      <div class="brand-wrap">
+        <span class="brand-dot"></span>
+        <span class="brand-title">大J私教 · 专项力量</span>
+      </div>
+      <span class="pro-pill">PRO 语音跟练</span>
+    </div>
+
+    <!-- ==================== VIEW 1: HOME ==================== -->
+    <div id="homeView" class="view active">
+      <div class="home-scroll">
+        <div class="hero-card">
+          <div class="hero-title">下肢单侧强化 · 腘绳肌与上肢对抗</div>
+          <div class="hero-sub">
+            包含保加利亚分腿蹲、单腿臀桥、腘绳肌前走、单腿提踵、俯卧撑与核心侧桥。支持真人语音报幕计数、计时每秒清脆叮声与 2.5D 肌肉发光示范。
+          </div>
+          <div class="toolbar-bar">
+            <div class="plan-tabs">
+              <button id="tabSplit" class="plan-tab active" onclick="switchPlanMode('split10')">
+                左右拆分 (10节)
+              </button>
+              <button id="tabCompact" class="plan-tab" onclick="switchPlanMode('compact6')">
+                精简合并 (6节)
+              </button>
+            </div>
+            <button class="add-ex-btn" onclick="openEditor(-1)">+ 添加训练</button>
+          </div>
+        </div>
+
+        <div id="exerciseListBox" class="ex-list"></div>
+      </div>
+
+      <div class="bottom-cta-wrap">
+        <button class="go-btn" onclick="startWorkoutFrom(0)">🚀 开始跟练 (GO)</button>
+      </div>
+    </div>
+
+    <!-- ==================== VIEW 2: WORKOUT PLAYER ==================== -->
+    <div id="playerView" class="view">
+      <!-- Top Bar: Step + Name + Description -->
+      <div class="player-top-header">
+        <div class="player-step-row">
+          <span id="pStepText" class="player-step-tag">动作 1 / 10</span>
+          <button class="back-list-btn" onclick="stopAndReturnHome()">← 返回列表</button>
+        </div>
+        <div id="pTitle" class="player-ex-title">保加利亚分腿蹲 (左侧)</div>
+        <div id="pDesc" class="player-ex-desc">每侧8次左右。若没有椅子，可做普通前后分腿蹲。</div>
+      </div>
+
+      <!-- Center Stage: 60FPS 2.5D Anatomical Coach Canvas -->
+      <div class="player-stage">
+        <div id="announceBanner" class="announce-pill">🎙️ 大J私教正在播报动作要领...</div>
+        <div id="countdownBox" class="countdown-layer">
+          <div id="cdNumber" class="countdown-num">3</div>
+          <div id="cdLabel" class="countdown-label">准备开始</div>
+        </div>
+        <canvas id="coachCanvas"></canvas>
+      </div>
+
+      <!-- Bottom Control Bar -->
+      <div class="player-footer">
+        <div class="ctrl-group">
+          <button class="ctrl-btn" onclick="stepPrev()">⏮</button>
+          <button id="pauseBtn" class="ctrl-btn pause-main" onclick="togglePauseWorkout()">⏸</button>
+          <button class="ctrl-btn" onclick="stepNext()">⏭</button>
+        </div>
+
+        <div id="progressBox" class="progress-box">
+          <div id="progressFillBar" class="progress-fill-bar"></div>
+          <span id="pStatusVal" class="progress-main-val">0 / 8 次</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== MODAL: ADD / EDIT EXERCISE ==================== -->
+    <div id="editModal" class="modal-mask">
+      <div class="modal-sheet">
+        <div class="sheet-title-row">
+          <span id="sheetTitle">添加训练动作</span>
+          <button class="icon-btn" onclick="closeEditor()">✕</button>
+        </div>
+
+        <div class="field-group">
+          <label>动作名称</label>
+          <input id="fName" class="field-input" type="text" placeholder="例如：保加利亚分腿蹲 (左侧)" />
+        </div>
+
+        <div class="field-group">
+          <label>计量方式</label>
+          <div class="mode-pills">
+            <button type="button" id="btnModeCount" class="mode-pill active" onclick="setEditorMode('count')">
+              🔢 计数模式 (报次数)
+            </button>
+            <button type="button" id="btnModeTime" class="mode-pill" onclick="setEditorMode('time')">
+              ⏱️ 计时模式 (每秒叮声)
+            </button>
+          </div>
+        </div>
+
+        <div id="countFields" style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div class="field-group">
+            <label>目标次数 (次)</label>
+            <input id="fTargetCount" class="field-input" type="number" min="1" max="200" value="10" />
+          </div>
+          <div class="field-group">
+            <label>每次动作节奏 (秒/次)</label>
+            <input id="fTempo" class="field-input" type="number" step="0.5" min="1" max="8" value="2.8" />
+          </div>
+        </div>
+
+        <div id="timeFields" class="field-group" style="display:none;">
+          <label>持续时长 (秒) · 每秒自动响叮声</label>
+          <input id="fTargetSec" class="field-input" type="number" min="5" max="600" value="20" />
+        </div>
+
+        <div class="field-group">
+          <label>2.5D 肌肉示范动作类型</label>
+          <select id="fAnimType" class="field-select">
+            <option value="split_squat_l">1. 保加利亚分腿蹲 (左侧主发力)</option>
+            <option value="split_squat_r">2. 保加利亚分腿蹲 (右侧主发力)</option>
+            <option value="glute_bridge_l">3. 单腿臀桥 (左腿支撑顶髋)</option>
+            <option value="glute_bridge_r">4. 单腿臀桥 (右腿支撑顶髋)</option>
+            <option value="hamstring_walkout">5. 腘绳肌前走 (仰卧臀桥脚跟前走)</option>
+            <option value="calf_raise_l">6. 单腿提踵 (左小腿快起慢落)</option>
+            <option value="calf_raise_r">7. 单腿提踵 (右小腿快起慢落)</option>
+            <option value="push_up">8. 标准俯卧撑 (上肢胸肌核心对抗)</option>
+            <option value="side_plank_l">9. 核心侧桥 (左侧骨盆稳定)</option>
+            <option value="side_plank_r">10. 核心侧桥 (右侧骨盆稳定)</option>
+          </select>
+        </div>
+
+        <div class="field-group">
+          <label>顶部动作要领描述</label>
+          <input id="fDesc" class="field-input" type="text" placeholder="输入简明发力要点..." />
+        </div>
+
+        <button class="sheet-save-btn" onclick="saveEditorExercise()">保存训练项目</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. DEFAULT WORKOUT PLANS (6 Core Exercises - Split 10 & Compact 6)
+    // =========================================================================
+    const INITIAL_PLANS = {
+      split10: [
+        {
+          name: "保加利亚分腿蹲 (左侧)",
+          type: "count",
+          target: 8,
+          tempo: 2.5,
+          anim: "split_squat_l",
+          muscle: "左腿股四头肌 · 臀大肌",
+          desc: "每侧8次左右。若没有椅子，可做普通前后分腿蹲。"
+        },
+        {
+          name: "保加利亚分腿蹲 (右侧)",
+          type: "count",
+          target: 8,
+          tempo: 2.5,
+          anim: "split_squat_r",
+          muscle: "右腿股四头肌 · 臀大肌",
+          desc: "每侧8次左右。若没有椅子，可做普通前后分腿蹲。"
+        },
+        {
+          name: "单腿臀桥 (左侧)",
+          type: "count",
+          target: 10,
+          tempo: 2.4,
+          anim: "glute_bridge_l",
+          muscle: "左侧臀大肌 · 腘绳肌",
+          desc: "单腿臀桥：每侧10次。臀部发力顶起，顶峰收缩。"
+        },
+        {
+          name: "单腿臀桥 (右侧)",
+          type: "count",
+          target: 10,
+          tempo: 2.4,
+          anim: "glute_bridge_r",
+          muscle: "右侧臀大肌 · 腘绳肌",
+          desc: "单腿臀桥：每侧10次。臀部发力顶起，顶峰收缩。"
+        },
+        {
+          name: "腘绳肌前走 (Hamstring Walkout)",
+          type: "count",
+          target: 5,
+          tempo: 4.0,
+          anim: "hamstring_walkout",
+          muscle: "大腿后侧腘绳肌群 · 核心",
+          desc: "仰卧臀桥位，脚跟一点点向前走，再走回来。每轮4～6次往返。强化大腿后侧。"
+        },
+        {
+          name: "单腿提踵 (左侧)",
+          type: "count",
+          target: 15,
+          tempo: 2.0,
+          anim: "calf_raise_l",
+          muscle: "左小腿三头肌 · 跟腱控制",
+          desc: "单腿提踵：每侧12～15次。上升快，下降慢，控制动作。"
+        },
+        {
+          name: "单腿提踵 (右侧)",
+          type: "count",
+          target: 15,
+          tempo: 2.0,
+          anim: "calf_raise_r",
+          muscle: "右小腿三头肌 · 跟腱控制",
+          desc: "单腿提踵：每侧12～15次。上升快，下降慢，控制动作。"
+        },
+        {
+          name: "俯卧撑 (Push-up)",
+          type: "count",
+          target: 12,
+          tempo: 2.4,
+          anim: "push_up",
+          muscle: "胸大肌 · 三角肌前束 · 肱三头肌",
+          desc: "俯卧撑：10～15次。增强上肢对抗能力。"
+        },
+        {
+          name: "侧桥 (左侧)",
+          type: "time",
+          target: 20,
+          tempo: 1.0,
+          anim: "side_plank_l",
+          muscle: "左侧腹斜肌 · 臀中肌 · 骨盆稳定",
+          desc: "侧桥：每侧20秒。保持骨盆稳定。"
+        },
+        {
+          name: "侧桥 (右侧)",
+          type: "time",
+          target: 20,
+          tempo: 1.0,
+          anim: "side_plank_r",
+          muscle: "右侧腹斜肌 · 臀中肌 · 骨盆稳定",
+          desc: "侧桥：每侧20秒。保持骨盆稳定。"
+        }
+      ],
+      compact6: [
+        {
+          name: "保加利亚分腿蹲",
+          type: "count",
+          target: 8,
+          tempo: 2.5,
+          anim: "split_squat_l",
+          muscle: "股四头肌 · 臀大肌",
+          desc: "每侧8次左右。若没有椅子，可做普通前后分腿蹲。"
+        },
+        {
+          name: "单腿臀桥",
+          type: "count",
+          target: 10,
+          tempo: 2.4,
+          anim: "glute_bridge_l",
+          muscle: "臀大肌 · 腘绳肌",
+          desc: "单腿臀桥：每侧10次。臀部发力顶起，顶峰收缩。"
+        },
+        {
+          name: "腘绳肌前走",
+          type: "count",
+          target: 5,
+          tempo: 4.0,
+          anim: "hamstring_walkout",
+          muscle: "大腿后侧腘绳肌群",
+          desc: "仰卧臀桥位，脚跟一点点向前走，再走回来。每轮4～6次往返。强化大腿后侧。"
+        },
+        {
+          name: "单腿提踵",
+          type: "count",
+          target: 15,
+          tempo: 2.0,
+          anim: "calf_raise_l",
+          muscle: "小腿腓肠肌 · 比目鱼肌",
+          desc: "单腿提踵：每侧12～15次。上升快，下降慢，控制动作。"
+        },
+        {
+          name: "俯卧撑",
+          type: "count",
+          target: 12,
+          tempo: 2.4,
+          anim: "push_up",
+          muscle: "胸大肌 · 上肢核心对抗",
+          desc: "俯卧撑：10～15次。增强上肢对抗能力。"
+        },
+        {
+          name: "侧桥",
+          type: "time",
+          target: 20,
+          tempo: 1.0,
+          anim: "side_plank_l",
+          muscle: "腹斜肌 · 骨盆稳定",
+          desc: "侧桥：每侧20秒。保持骨盆稳定。"
+        }
+      ]
+    };
+
+    let planMode = "split10";
+    let plans = JSON.parse(JSON.stringify(INITIAL_PLANS));
+    try {
+      const cached = localStorage.getItem("daj_pro_plans_v9");
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && parsed.split10 && parsed.compact6) plans = parsed;
+      }
+    } catch (e) {}
+
+    function persistPlans() {
+      try {
+        localStorage.setItem("daj_pro_plans_v9", JSON.stringify(plans));
+      } catch (e) {}
+    }
+
+    // =========================================================================
+    // 2. HARDWARE-SILENT-BYPASS WAV GENERATOR + WEB AUDIO + TTS ENGINE
+    //    (Solves iOS Silent Switch muting WebAudio by generating PCM WAV media)
+    // =========================================================================
+    let audioCtx = null;
+    let dingNormalAudio = null;
+    let dingHighAudio = null;
+
+    function createBellWavDataUri(baseFreq, durationSec) {
+      const sampleRate = 44100;
+      const numSamples = Math.floor(sampleRate * durationSec);
+      const buffer = new ArrayBuffer(44 + numSamples * 2);
+      const view = new DataView(buffer);
+
+      function writeStr(offset, str) {
+        for (let i = 0; i < str.length; i++) {
+          view.setUint8(offset + i, str.charCodeAt(i));
+        }
+      }
+
+      writeStr(0, "RIFF");
+      view.setUint32(4, 36 + numSamples * 2, true);
+      writeStr(8, "WAVE");
+      writeStr(12, "fmt ");
+      view.setUint32(16, 16, true);
+      view.setUint16(20, 1, true); // PCM
+      view.setUint16(22, 1, true); // Mono
+      view.setUint32(24, sampleRate, true);
+      view.setUint32(28, sampleRate * 2, true);
+      view.setUint16(32, 2, true);
+      view.setUint16(34, 16, true);
+      writeStr(36, "data");
+      view.setUint32(40, numSamples * 2, true);
+
+      for (let i = 0; i < numSamples; i++) {
+        const t = i / sampleRate;
+        const attack = Math.min(1, t / 0.004);
+        const env1 = Math.exp(-t * 11.5);
+        const env2 = Math.exp(-t * 24.0);
+        // Crystal marimba (880Hz + 1760Hz harmonics)
+        const wave =
+          0.68 * Math.sin(2 * Math.PI * baseFreq * t) * env1 +
+          0.32 * Math.sin(2 * Math.PI * (baseFreq * 2) * t) * env2;
+        const sample = Math.max(-1, Math.min(1, wave * attack * 0.88));
+        view.setInt16(44 + i * 2, sample * 32767, true);
+      }
+
+      const bytes = new Uint8Array(buffer);
+      let binary = "";
+      const chunkSize = 8192;
+      for (let i = 0; i < bytes.length; i += chunkSize) {
+        binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+      }
+      return "data:audio/wav;base64," + btoa(binary);
+    }
+
+    function initSoundSystem() {
+      try {
+        if (!dingNormalAudio) {
+          dingNormalAudio = new Audio(createBellWavDataUri(880.0, 0.28)); // 880Hz + 1760Hz crystal marimba
+          dingNormalAudio.preload = "auto";
+        }
+        if (!dingHighAudio) {
+          dingHighAudio = new Audio(createBellWavDataUri(1174.66, 0.34)); // D6 high bell
+          dingHighAudio.preload = "auto";
+        }
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (AC && !audioCtx) audioCtx = new AC();
+        if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+      } catch (e) {}
+    }
+
+    // Pure lightweight WebAudio beep for countdown ticks (avoids iOS <audio> ducking against TTS)
+    function playWebAudioBeep(isHigh) {
+      try {
+        initSoundSystem();
+        if (!audioCtx) return;
+        if (audioCtx.state === "suspended") audioCtx.resume();
+        const now = audioCtx.currentTime;
+        const freq = isHigh ? 1318.5 : 880.0;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(freq, now);
+        gain.gain.setValueAtTime(0.001, now);
+        gain.gain.linearRampToValueAtTime(0.16, now + 0.005);
+        gain.gain.exponentialRampToValueAtTime(0.0008, now + 0.14);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start(now);
+        osc.stop(now + 0.15);
+      } catch (e) {}
+    }
+
+    function playDingSound(isHigh) {
+      initSoundSystem();
+
+      // Visual pulse on progress pill
+      const pBox = document.getElementById("progressBox");
+      if (pBox) {
+        pBox.classList.remove("ding-flash");
+        void pBox.offsetWidth;
+        pBox.classList.add("ding-flash");
+        setTimeout(() => pBox.classList.remove("ding-flash"), 180);
+      }
+
+      // 1) Play HTML5 <audio> WAV (plays on iOS Media channel even when Silent Switch is ON)
+      try {
+        const targetAudio = isHigh ? dingHighAudio : dingNormalAudio;
+        if (targetAudio) {
+          targetAudio.currentTime = 0;
+          const playPromise = targetAudio.play();
+          if (playPromise && playPromise.catch) playPromise.catch(() => {});
+        }
+      } catch (e) {}
+
+      // 2) Also fire Web Audio API harmonic chime for extra richness
+      try {
+        if (audioCtx) {
+          if (audioCtx.state === "suspended") audioCtx.resume();
+          const now = audioCtx.currentTime;
+          const freq = isHigh ? 1174.66 : 880.0;
+
+          const osc1 = audioCtx.createOscillator();
+          const gain1 = audioCtx.createGain();
+          osc1.type = "sine";
+          osc1.frequency.setValueAtTime(freq, now);
+          gain1.gain.setValueAtTime(0.001, now);
+          gain1.gain.linearRampToValueAtTime(0.28, now + 0.005);
+          gain1.gain.exponentialRampToValueAtTime(0.0008, now + 0.22);
+          osc1.connect(gain1);
+          gain1.connect(audioCtx.destination);
+          osc1.start(now);
+          osc1.stop(now + 0.24);
+
+          const osc2 = audioCtx.createOscillator();
+          const gain2 = audioCtx.createGain();
+          osc2.type = "triangle";
+          osc2.frequency.setValueAtTime(freq * 2, now);
+          gain2.gain.setValueAtTime(0.001, now);
+          gain2.gain.linearRampToValueAtTime(0.14, now + 0.004);
+          gain2.gain.exponentialRampToValueAtTime(0.0008, now + 0.14);
+          osc2.connect(gain2);
+          gain2.connect(audioCtx.destination);
+          osc2.start(now);
+          osc2.stop(now + 0.16);
+        }
+      } catch (e) {}
+    }
+
+    // Speech Synthesis with strict non-interruption callback + safe fallback timeout
+    let activeSpeechTimer = null;
+    function speakText(text, onComplete, noCancel, customRate) {
+      if (activeSpeechTimer) {
+        clearTimeout(activeSpeechTimer);
+        activeSpeechTimer = null;
+      }
+      if (!("speechSynthesis" in window)) {
+        if (onComplete) setTimeout(onComplete, 500);
+        return;
+      }
+
+      try {
+        if (!noCancel) {
+          window.speechSynthesis.cancel();
+        }
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.lang = "zh-CN";
+        utter.rate = customRate || 1.08;
+        utter.pitch = 1.02;
+
+        let finished = false;
+        const done = () => {
+          if (finished) return;
+          finished = true;
+          if (activeSpeechTimer) {
+            clearTimeout(activeSpeechTimer);
+            activeSpeechTimer = null;
+          }
+          if (onComplete) onComplete();
+        };
+
+        utter.onend = done;
+        utter.onerror = done;
+
+        // Safe fallback timeout calculated from text length + 1.5s
+        const estMs = Math.max(2000, text.length * 250 + 1500);
+        activeSpeechTimer = setTimeout(done, estMs);
+
+        window.speechSynthesis.speak(utter);
+      } catch (e) {
+        if (onComplete) setTimeout(onComplete, 500);
+      }
+    }
+
+    // =========================================================================
+    // 3. WORKOUT STATE MACHINE (Synced with 60FPS Animation Engine)
+    // =========================================================================
+    let currentIdx = 0;
+    let workoutPhase = "idle"; // 'announcing' | 'countdown' | 'working' | 'paused'
+    let isPaused = false;
+    let currentProgress = 0;
+    let countdownSec = 3;
+    let mainInterval = null;
+    let repStartTimestamp = performance.now();
+
+    function getActiveList() {
+      return plans[planMode];
+    }
+
+    function renderHomeList() {
+      document.getElementById("tabSplit").className =
+        "plan-tab" + (planMode === "split10" ? " active" : "");
+      document.getElementById("tabCompact").className =
+        "plan-tab" + (planMode === "compact6" ? " active" : "");
+
+      const list = getActiveList();
+      const box = document.getElementById("exerciseListBox");
+      box.innerHTML = list
+        .map((ex, i) => {
+          const isTimed = ex.type === "time";
+          const badgeTxt = isTimed ? `${ex.target} 秒 · 叮声` : `${ex.target} 次 · 报数`;
+          return `
+            <div class="ex-item">
+              <div class="ex-item-left" onclick="startWorkoutFrom(${i})">
+                <div class="ex-num">${i + 1}</div>
+                <div class="ex-info">
+                  <div class="ex-info-top">
+                    <span class="ex-name">${ex.name}</span>
+                    <span class="ex-badge ${isTimed ? "timed" : ""}">${badgeTxt}</span>
+                  </div>
+                  <div class="ex-desc">${ex.desc}</div>
+                </div>
+              </div>
+              <div class="ex-actions">
+                <button class="icon-btn" onclick="openEditor(${i})">✎</button>
+                <button class="icon-btn" onclick="deleteExercise(${i})">✕</button>
+              </div>
+            </div>
+          `;
+        })
+        .join("");
+    }
+
+    function switchPlanMode(mode) {
+      planMode = mode;
+      renderHomeList();
+    }
+
+    function clearWorkoutTimers() {
+      if (mainInterval) {
+        clearInterval(mainInterval);
+        mainInterval = null;
+      }
+      if (activeSpeechTimer) {
+        clearTimeout(activeSpeechTimer);
+        activeSpeechTimer = null;
+      }
+    }
+
+    function startWorkoutFrom(index) {
+      initSoundSystem();
+      // Unlock audio element on user gesture
+      try {
+        if (dingNormalAudio) {
+          dingNormalAudio.volume = 0.01;
+          const p = dingNormalAudio.play();
+          if (p && p.then) {
+            p.then(() => {
+              dingNormalAudio.pause();
+              dingNormalAudio.currentTime = 0;
+              dingNormalAudio.volume = 1.0;
+            }).catch(() => {
+              dingNormalAudio.volume = 1.0;
+            });
+          } else {
+            dingNormalAudio.volume = 1.0;
+          }
+        }
+      } catch (e) {}
+
+      currentIdx = index || 0;
+      isPaused = false;
+      updatePauseButtonUI();
+
+      document.getElementById("homeView").classList.remove("active");
+      document.getElementById("playerView").classList.add("active");
+
+      launchCurrentExercise();
+    }
+
+    function stopAndReturnHome() {
+      clearWorkoutTimers();
+      workoutPhase = "idle";
+      try {
+        if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      } catch (e) {}
+      document.getElementById("playerView").classList.remove("active");
+      document.getElementById("homeView").classList.add("active");
+      renderHomeList();
+    }
+
+    function launchCurrentExercise() {
+      clearWorkoutTimers();
+      const list = getActiveList();
+      if (currentIdx >= list.length) {
+        playDingSound(true);
+        speakText("太棒了！今日大J私教全部动作已完成，记得拉伸放松。");
+        stopAndReturnHome();
+        return;
+      }
+
+      const ex = list[currentIdx];
+      currentProgress = 0;
+      workoutPhase = "announcing";
+      repStartTimestamp = performance.now();
+
+      document.getElementById("pStepText").textContent = `${currentIdx + 1}/${list.length} ${ex.name}`;
+      document.getElementById("pTitle").textContent = ex.name;
+      document.getElementById("pDesc").textContent = ex.desc;
+      document.getElementById("countdownBox").style.display = "none";
+      updateFooterProgressUI();
+
+      const announceBanner = document.getElementById("announceBanner");
+      announceBanner.style.display = "block";
+
+      // Natural Chinese intro speech - waits an extra 350ms buffer after finishing before 3-2-1 countdown
+      const orderNames = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"];
+      const ordTxt = orderNames[currentIdx] || String(currentIdx + 1);
+      const cleanSpeechName = ex.name.replace(/\(/g, "，").replace(/\)/g, "");
+      const targetStr = ex.type === "time" ? `坚持 ${ex.target} 秒` : `目标 ${ex.target} 次`;
+      const introSpeech = `第${ordTxt}个动作，${cleanSpeechName}，${targetStr}。`;
+
+      speakText(
+        introSpeech,
+        () => {
+          if (workoutPhase !== "announcing") return;
+          announceBanner.style.display = "none";
+          activeSpeechTimer = setTimeout(() => {
+            if (workoutPhase === "announcing") {
+              startCountdownPhase();
+            }
+          }, 350);
+        },
+        false,
+        1.06
+      );
+    }
+
+    function startCountdownPhase() {
+      workoutPhase = "countdown";
+      countdownSec = 3;
+      const cdBox = document.getElementById("countdownBox");
+      const cdNum = document.getElementById("cdNumber");
+      const cdLbl = document.getElementById("cdLabel");
+
+      cdBox.style.display = "flex";
+      cdNum.textContent = "3";
+      cdLbl.textContent = "准备开始";
+      playWebAudioBeep(false);
+      speakText("3", null, true, 1.25);
+
+      mainInterval = setInterval(() => {
+        if (isPaused) return;
+        countdownSec--;
+        if (countdownSec > 0) {
+          cdNum.textContent = String(countdownSec);
+          playWebAudioBeep(false);
+          speakText(String(countdownSec), null, true, 1.25);
+        } else if (countdownSec === 0) {
+          cdNum.textContent = "GO";
+          cdLbl.textContent = "开始发力！";
+          playWebAudioBeep(true);
+          speakText("开始", null, true, 1.25);
+        } else {
+          clearInterval(mainInterval);
+          mainInterval = null;
+          cdBox.style.display = "none";
+          startWorkingPhase();
+        }
+      }, 1100);
+    }
+
+    function startWorkingPhase() {
+      workoutPhase = "working";
+      repStartTimestamp = performance.now();
+      const ex = getActiveList()[currentIdx];
+      if (!ex) return;
+
+      if (ex.type === "time") {
+        // TIMED MODE: Play crystal ding every single second without cancelling speech
+        currentProgress = 1;
+        updateFooterProgressUI();
+        playDingSound(false);
+
+        mainInterval = setInterval(() => {
+          if (isPaused) return;
+          currentProgress++;
+          if (currentProgress <= ex.target) {
+            updateFooterProgressUI();
+            const isFinal3 = ex.target - currentProgress < 3;
+            playDingSound(isFinal3);
+          } else {
+            clearInterval(mainInterval);
+            mainInterval = null;
+            speakText("完成", () => {
+              currentIdx++;
+              launchCurrentExercise();
+            }, true, 1.15);
+          }
+        }, 1000);
+      } else {
+        // COUNT MODE: Synchronized with rep tempo
+        const tempoMs = Math.max(1500, Math.round((Number(ex.tempo) || 2.6) * 1000));
+        currentProgress = 1;
+        repStartTimestamp = performance.now();
+        updateFooterProgressUI();
+        playWebAudioBeep(false);
+        speakText("1", null, true, 1.2);
+
+        mainInterval = setInterval(() => {
+          if (isPaused) return;
+          currentProgress++;
+          repStartTimestamp = performance.now();
+
+          if (currentProgress <= ex.target) {
+            updateFooterProgressUI();
+            playWebAudioBeep(currentProgress === ex.target);
+            if (currentProgress === ex.target) {
+              speakText(`${currentProgress}，最后一个`, null, true, 1.15);
+            } else if (ex.target >= 8 && currentProgress === Math.floor(ex.target / 2)) {
+              speakText(`${currentProgress}，很好，坚持`, null, true, 1.15);
+            } else {
+              speakText(String(currentProgress), null, true, 1.2);
+            }
+          } else {
+            clearInterval(mainInterval);
+            mainInterval = null;
+            currentIdx++;
+            setTimeout(() => launchCurrentExercise(), 650);
+          }
+        }, tempoMs);
+      }
+    }
+
+    function updateFooterProgressUI() {
+      const ex = getActiveList()[currentIdx];
+      if (!ex) return;
+
+      const valEl = document.getElementById("pStatusVal");
+      const fillEl = document.getElementById("progressFillBar");
+
+      const pct = Math.min(100, (currentProgress / Math.max(1, ex.target)) * 100);
+      fillEl.style.width = `${pct}%`;
+
+      if (ex.type === "time") {
+        valEl.textContent = `${currentProgress}" / ${ex.target}"`;
+      } else {
+        valEl.textContent = `${currentProgress} / ${ex.target} 次`;
+      }
+    }
+
+    function togglePauseWorkout() {
+      isPaused = !isPaused;
+      updatePauseButtonUI();
+    }
+
+    function updatePauseButtonUI() {
+      const btn = document.getElementById("pauseBtn");
+      if (!btn) return;
+      if (isPaused) {
+        btn.textContent = "▶";
+        btn.classList.add("paused");
+      } else {
+        btn.textContent = "⏸";
+        btn.classList.remove("paused");
+      }
+    }
+
+    function stepPrev() {
+      if (currentIdx > 0) currentIdx--;
+      launchCurrentExercise();
+    }
+
+    function stepNext() {
+      currentIdx++;
+      launchCurrentExercise();
+    }
+
+    // =========================================================================
+    // 4. 60FPS CRISP FLAT-VECTOR COACH RENDERER
+    //    (100% Opaque Full Frame Clear, Zero Glows, Zero Shadows, Zero Trails)
+    // =========================================================================
+    function lerp(a, b, t) {
+      return a + (b - a) * t;
+    }
+
+    // Crisp vector anatomical limb with solid clean fill (no glow, no shadow, no trails)
+    function drawAnatomicalSegment(ctx, x1, y1, x2, y2, rStart, rEnd, muscleBulge, isBackLayer) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const len = Math.hypot(dx, dy);
+      if (len < 1) return;
+      const angle = Math.atan2(dy, dx);
+
+      ctx.save();
+      ctx.translate(x1, y1);
+      ctx.rotate(angle);
+
+      const midTop = -(Math.max(rStart, rEnd) + muscleBulge * 0.6);
+      const midBot = Math.max(rStart, rEnd) + muscleBulge * 0.45;
+
+      ctx.beginPath();
+      ctx.moveTo(0, -rStart);
+      ctx.bezierCurveTo(len * 0.3, midTop, len * 0.7, midTop * 0.9, len, -rEnd);
+      ctx.arc(len, 0, rEnd, -Math.PI / 2, Math.PI / 2);
+      ctx.bezierCurveTo(len * 0.7, midBot * 0.9, len * 0.3, midBot, 0, rStart);
+      ctx.arc(0, 0, rStart, Math.PI / 2, Math.PI * 1.5);
+      ctx.closePath();
+
+      ctx.fillStyle = isBackLayer ? "#C69076" : "#E6B296";
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Crisp athletic compression shorts / tank top
+    function drawSportswearSegment(ctx, x1, y1, x2, y2, rStart, rEnd, isBackLayer) {
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const len = Math.hypot(dx, dy);
+      if (len < 1) return;
+      const angle = Math.atan2(dy, dx);
+
+      ctx.save();
+      ctx.translate(x1, y1);
+      ctx.rotate(angle);
+
+      ctx.beginPath();
+      ctx.moveTo(0, -rStart);
+      ctx.lineTo(len, -rEnd);
+      ctx.arc(len, 0, rEnd, -Math.PI / 2, Math.PI / 2);
+      ctx.lineTo(0, rStart);
+      ctx.arc(0, 0, rStart, Math.PI / 2, Math.PI * 1.5);
+      ctx.closePath();
+
+      ctx.fillStyle = isBackLayer ? "#334155" : "#1E293B";
+      ctx.fill();
+      ctx.restore();
+    }
+
+    function drawHead3D(ctx, x, y, tiltRad) {
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(tiltRad || 0);
+
+      // Neck
+      ctx.fillStyle = "#D49B7E";
+      ctx.beginPath();
+      ctx.roundRect(-5, 7, 10, 11, 4);
+      ctx.fill();
+
+      // Clean solid head
+      ctx.fillStyle = "#E6B296";
+      ctx.beginPath();
+      ctx.ellipse(0, 0, 13.5, 15.5, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Athletic Hair
+      ctx.fillStyle = "#1E293B";
+      ctx.beginPath();
+      ctx.arc(0, -3.5, 14, Math.PI * 0.92, Math.PI * 2.08);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawShoe3D(ctx, ankleX, ankleY, toeX, toeY, isBackLayer) {
+      const dx = toeX - ankleX;
+      const dy = toeY - ankleY;
+      const angle = Math.atan2(dy, dx);
+      const len = Math.max(19, Math.hypot(dx, dy));
+
+      ctx.save();
+      ctx.translate(ankleX, ankleY);
+      ctx.rotate(angle);
+
+      ctx.fillStyle = isBackLayer ? "#475569" : "#1E293B";
+      ctx.beginPath();
+      ctx.moveTo(-5, -5);
+      ctx.quadraticCurveTo(len * 0.5, -6, len + 3, -1);
+      ctx.quadraticCurveTo(len + 5, 4, len, 5);
+      ctx.lineTo(-5, 5);
+      ctx.closePath();
+      ctx.fill();
+
+      // Clean sole
+      ctx.fillStyle = "#10B981";
+      ctx.beginPath();
+      ctx.roundRect(-5, 3.2, len + 7, 3.5, 1.5);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function renderCoachCanvas(nowMs) {
+      const canvas = document.getElementById("coachCanvas");
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      if (rect.width === 0 || rect.height === 0) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      const w = Math.round(rect.width * dpr);
+      const h = Math.round(rect.height * dpr);
+      if (canvas.width !== w || canvas.height !== h) {
+        canvas.width = w;
+        canvas.height = h;
+      }
+
+      const ctx = canvas.getContext("2d");
+
+      // 1. STRICT MATRIX RESET + 100% OPAQUE CLEAR (Eliminates any ghosting or motion trails)
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.shadowBlur = 0;
+      ctx.shadowColor = "transparent";
+      ctx.globalAlpha = 1.0;
+      ctx.globalCompositeOperation = "source-over";
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#F8FAFC";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+
+      const W = rect.width;
+      const H = rect.height;
+
+      const ex = getActiveList()[currentIdx] || getActiveList()[0];
+      const animType = ex ? ex.anim : "split_squat_l";
+
+      // Compute normalized cycle [0..1] synchronized to actual workout rep tempo
+      let cycle = 0;
+      if (workoutPhase === "working" && !isPaused) {
+        const tempoMs =
+          ex.type === "count"
+            ? Math.max(1500, Math.round((Number(ex.tempo) || 2.6) * 1000))
+            : 2200;
+        cycle = ((nowMs - repStartTimestamp) % tempoMs) / tempoMs;
+      } else {
+        cycle = (nowMs % 2600) / 2600;
+      }
+
+      const scale = Math.min(W / 360, H / 360);
+      const ox = (W - 360 * scale) * 0.5;
+      const oy = (H - 360 * scale) * 0.52;
+      ctx.save();
+      ctx.translate(ox, oy);
+      ctx.scale(scale, scale);
+
+      const floorY = 312;
+
+      // Clean solid studio floor line (no radial gradient halos or ripples)
+      ctx.strokeStyle = "#CBD5E1";
+      ctx.lineWidth = 3;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(46, floorY);
+      ctx.lineTo(314, floorY);
+      ctx.stroke();
+
+      // -----------------------------------------------------------------
+      // POSE 1 & 2: BULGARIAN SPLIT SQUAT (保加利亚分腿蹲 左/右侧)
+      // -----------------------------------------------------------------
+      if (animType === "split_squat_l" || animType === "split_squat_r") {
+        const isRightWorking = animType === "split_squat_r";
+        const depth = 0.5 - 0.5 * Math.cos(cycle * Math.PI * 2);
+
+        // Elevated Rear Training Bench
+        ctx.fillStyle = "#64748B";
+        ctx.beginPath();
+        ctx.roundRect(236, 246, 68, 15, 6);
+        ctx.fill();
+        ctx.fillStyle = "#94A3B8";
+        ctx.fillRect(246, 261, 8, 51);
+        ctx.fillRect(284, 261, 8, 51);
+
+        const hipX = 172;
+        const hipY = lerp(192, 238, depth);
+        const shX = lerp(166, 154, depth);
+        const shY = hipY - 68;
+
+        const rearKX = lerp(212, 214, depth);
+        const rearKY = lerp(248, 286, depth);
+        const frontKX = lerp(134, 112, depth);
+        const frontKY = lerp(248, 242, depth);
+
+        // Rear Leg
+        drawAnatomicalSegment(ctx, hipX + 4, hipY, rearKX, rearKY, 13, 8.5, 2.8, !isRightWorking);
+        drawAnatomicalSegment(ctx, rearKX, rearKY, 248, 250, 8.5, 6, 2.0, !isRightWorking);
+        drawSportswearSegment(ctx, hipX + 4, hipY, lerp(hipX + 4, rearKX, 0.55), lerp(hipY, rearKY, 0.55), 14, 11.5, true);
+        drawShoe3D(ctx, 248, 250, 262, 266, true);
+
+        // Front Working Leg
+        drawAnatomicalSegment(ctx, hipX, hipY, frontKX, frontKY, 14.5, 9.5, 4.2, false);
+        drawAnatomicalSegment(ctx, frontKX, frontKY, 126, 304, 9.5, 6.5, 3.0, false);
+        drawSportswearSegment(ctx, hipX, hipY, lerp(hipX, frontKX, 0.55), lerp(hipY, frontKY, 0.55), 15, 12.5, false);
+        drawShoe3D(ctx, 126, 304, 100, 307, false);
+
+        // Torso & Arms
+        drawSportswearSegment(ctx, hipX, hipY, shX, shY, 15.5, 17, false);
+        drawAnatomicalSegment(ctx, shX, shY + 5, shX - 14, shY + 35, 8, 6.5, 1.8, false);
+        drawAnatomicalSegment(ctx, shX - 14, shY + 35, shX - 34, shY + 18, 6.5, 5.5, 1.2, false);
+        drawHead3D(ctx, shX - 3, shY - 22, -0.08 * depth);
+      }
+
+      // -----------------------------------------------------------------
+      // POSE 3 & 4: SINGLE-LEG GLUTE BRIDGE (单腿臀桥 左/右侧)
+      // -----------------------------------------------------------------
+      else if (animType === "glute_bridge_l" || animType === "glute_bridge_r") {
+        let lift = 0;
+        if (cycle < 0.4) {
+          lift = Math.sin((cycle / 0.4) * (Math.PI / 2));
+        } else if (cycle < 0.65) {
+          lift = 1;
+        } else {
+          lift = 0.5 * (1 + Math.cos(((cycle - 0.65) / 0.35) * Math.PI));
+        }
+
+        // Yoga Mat
+        ctx.fillStyle = "#10B981";
+        ctx.beginPath();
+        ctx.roundRect(44, floorY - 5, 272, 6, 3);
+        ctx.fill();
+
+        const shX = 248, shY = 298;
+        const pX = 186, pY = lerp(297, 252, lift);
+        const kX = 132, kY = 236;
+        const fX = 114, fY = 304;
+
+        const dx = pX - shX, dy = pY - shY;
+        const dl = Math.hypot(dx, dy) || 1;
+        const freeX = pX + (dx / dl) * 86 - 10;
+        const freeY = pY + (dy / dl) * 86 - 24;
+
+        drawAnatomicalSegment(ctx, pX, pY, freeX, freeY, 12.5, 6.5, 2.5, true);
+        drawShoe3D(ctx, freeX, freeY, freeX - 10, freeY - 16, true);
+
+        drawAnatomicalSegment(ctx, pX, pY, kX, kY, 14, 9.5, 3.8, false);
+        drawAnatomicalSegment(ctx, kX, kY, fX, fY, 9.5, 6.5, 2.6, false);
+        drawSportswearSegment(ctx, pX, pY, lerp(pX, kX, 0.55), lerp(pY, kY, 0.55), 14.5, 12, false);
+        drawShoe3D(ctx, fX, fY, fX - 22, fY + 2, false);
+
+        drawSportswearSegment(ctx, pX, pY, shX, shY, 15, 16, false);
+        drawAnatomicalSegment(ctx, shX, shY, 184, 306, 7.5, 5.5, 1.5, false);
+        drawHead3D(ctx, 276, 296, 1.35);
+      }
+
+      // -----------------------------------------------------------------
+      // POSE 5: HAMSTRING WALKOUT (腘绳肌前走)
+      // -----------------------------------------------------------------
+      else if (animType === "hamstring_walkout") {
+        const dist = 0.5 - 0.5 * Math.cos(cycle * Math.PI * 2);
+        const stepAlt = Math.sin(cycle * Math.PI * 8);
+
+        ctx.fillStyle = "#10B981";
+        ctx.beginPath();
+        ctx.roundRect(40, floorY - 5, 280, 6, 3);
+        ctx.fill();
+
+        const shX = 256, shY = 298;
+        const pX = 194, pY = 264;
+        const baseFX = lerp(136, 70, dist);
+        const lFX = baseFX + stepAlt * 7;
+        const lFY = 304 - Math.max(0, stepAlt) * 8;
+        const rFX = baseFX - stepAlt * 7 + 10;
+        const rFY = 304 - Math.max(0, -stepAlt) * 8;
+
+        const lKX = (pX + lFX) * 0.5 - 6;
+        const lKY = lerp(234, 256, dist);
+        const rKX = (pX + rFX) * 0.5 - 4;
+        const rKY = lerp(238, 260, dist);
+
+        drawAnatomicalSegment(ctx, pX, pY, rKX, rKY, 12.5, 8.5, 2.5, true);
+        drawAnatomicalSegment(ctx, rKX, rKY, rFX, rFY, 8.5, 6, 2.0, true);
+        drawShoe3D(ctx, rFX, rFY, rFX - 14, rFY - 14, true);
+
+        drawAnatomicalSegment(ctx, pX, pY, lKX, lKY, 13.5, 9, 3.4, false);
+        drawAnatomicalSegment(ctx, lKX, lKY, lFX, lFY, 9, 6.5, 2.4, false);
+        drawSportswearSegment(ctx, pX, pY, lerp(pX, lKX, 0.5), lerp(pY, lKY, 0.5), 14.5, 12, false);
+        drawShoe3D(ctx, lFX, lFY, lFX - 14, lFY - 14, false);
+
+        drawSportswearSegment(ctx, pX, pY, shX, shY, 15, 16, false);
+        drawAnatomicalSegment(ctx, shX, shY, 194, 306, 7.5, 5.5, 1.5, false);
+        drawHead3D(ctx, 284, 296, 1.35);
+      }
+
+      // -----------------------------------------------------------------
+      // POSE 6 & 7: SINGLE-LEG CALF RAISE (单腿提踵: 快起向心 -> 慢落离心)
+      // -----------------------------------------------------------------
+      else if (animType === "calf_raise_l" || animType === "calf_raise_r") {
+        let heelLift = 0;
+        if (cycle < 0.25) {
+          heelLift = Math.sin((cycle / 0.25) * (Math.PI / 2));
+        } else if (cycle < 0.42) {
+          heelLift = 1;
+        } else {
+          heelLift = 0.5 * (1 + Math.cos(((cycle - 0.42) / 0.58) * Math.PI));
+        }
+        const dy = heelLift * 26;
+
+        // Step Block
+        ctx.fillStyle = "#64748B";
+        ctx.beginPath();
+        ctx.roundRect(140, 302, 48, 10, 4);
+        ctx.fill();
+
+        const ankleX = 178, ankleY = 300 - dy;
+        const kneeX = 176, kneeY = 236 - dy;
+        const hipX = 178, hipY = 176 - dy;
+        const shX = 178, shY = 108 - dy;
+
+        drawAnatomicalSegment(ctx, hipX + 4, hipY, 188, kneeY + 6, 12.5, 8.5, 2.2, true);
+        drawAnatomicalSegment(ctx, 188, kneeY + 6, 210, kneeY + 18, 8, 6, 2.0, true);
+        drawShoe3D(ctx, 210, kneeY + 18, 216, kneeY + 34, true);
+
+        drawAnatomicalSegment(ctx, hipX, hipY, kneeX, kneeY, 13.5, 9.5, 3.0, false);
+        drawAnatomicalSegment(ctx, kneeX, kneeY, ankleX, ankleY, 9.5, 6, 2.6 + heelLift * 3.0, false);
+        drawSportswearSegment(ctx, hipX, hipY, hipX, hipY + 34, 15, 13, false);
+
+        drawShoe3D(ctx, ankleX, ankleY, 154, 304, false);
+
+        drawSportswearSegment(ctx, hipX, hipY, shX, shY, 15.5, 16.5, false);
+        drawAnatomicalSegment(ctx, shX, shY + 6, 152, shY + 36, 7.5, 6.5, 1.5, false);
+        drawAnatomicalSegment(ctx, 152, shY + 36, 168, hipY - 4, 6.5, 5.5, 1.2, false);
+        drawHead3D(ctx, shX, shY - 22, 0);
+      }
+
+      // -----------------------------------------------------------------
+      // POSE 8: PUSH-UP (标准俯卧撑)
+      // -----------------------------------------------------------------
+      else if (animType === "push_up") {
+        const press = 0.5 - 0.5 * Math.cos(cycle * Math.PI * 2);
+
+        ctx.fillStyle = "#10B981";
+        ctx.beginPath();
+        ctx.roundRect(44, floorY - 5, 272, 6, 3);
+        ctx.fill();
+
+        const ax = 86, ay = 292;
+        const bodyAng = lerp(-0.26, -0.05, press);
+        const hx = ax + Math.cos(bodyAng) * 90;
+        const hy = ay + Math.sin(bodyAng) * 90;
+        const sx = ax + Math.cos(bodyAng) * 164;
+        const sy = ay + Math.sin(bodyAng) * 164;
+        const headX = ax + Math.cos(bodyAng) * 190;
+        const headY = ay + Math.sin(bodyAng) * 190;
+
+        const elbowX = lerp(242, 220, press);
+        const elbowY = lerp(268, 274, press);
+
+        drawAnatomicalSegment(ctx, ax, ay, hx, hy, 7, 13.5, 2.5, false);
+        drawSportswearSegment(ctx, hx, hy, lerp(hx, ax, 0.45), lerp(hy, ay, 0.45), 14.5, 12.5, false);
+        drawSportswearSegment(ctx, hx, hy, sx, sy, 15, 16, false);
+        drawShoe3D(ctx, ax, ay, 80, 306, false);
+
+        drawAnatomicalSegment(ctx, sx, sy, elbowX, elbowY, 8.5, 7, 2.5, false);
+        drawAnatomicalSegment(ctx, elbowX, elbowY, 246, 306, 7, 5.5, 1.5, false);
+        drawHead3D(ctx, headX, headY, bodyAng + 0.35);
+      }
+
+      // -----------------------------------------------------------------
+      // POSE 9 & 10: SIDE PLANK (核心侧桥 左/右侧)
+      // -----------------------------------------------------------------
+      else {
+        const breathe = 0.5 + 0.5 * Math.sin((nowMs / 600) * Math.PI);
+
+        ctx.fillStyle = "#10B981";
+        ctx.beginPath();
+        ctx.roundRect(44, floorY - 5, 272, 6, 3);
+        ctx.fill();
+
+        const fx = 84, fy = 300;
+        const hx = 176, hy = 260 - breathe * 3;
+        const sx = 248, sy = 228 - breathe * 3.5;
+
+        drawAnatomicalSegment(ctx, fx, fy, hx, hy, 7.5, 14, 2.8, false);
+        drawSportswearSegment(ctx, hx, hy, lerp(hx, fx, 0.42), lerp(hy, fy, 0.42), 15, 12.5, false);
+        drawSportswearSegment(ctx, hx, hy, sx, sy, 15, 16, false);
+        drawShoe3D(ctx, fx, fy, fx - 8, fy + 14, false);
+
+        // Supporting Forearm
+        drawAnatomicalSegment(ctx, sx, sy, 248, 304, 8.5, 7, 2.0, false);
+        drawAnatomicalSegment(ctx, 248, 304, 270, 304, 6.5, 5.5, 1.0, false);
+
+        // Top Hand on Hip
+        drawAnatomicalSegment(ctx, sx - 4, sy - 6, 214, 200, 7, 6, 1.5, true);
+        drawAnatomicalSegment(ctx, 214, 200, hx + 4, hy - 8, 6, 5, 1.2, true);
+        drawHead3D(ctx, sx + 24, sy - 10, -0.35);
+      }
+
+      ctx.restore();
+      ctx.restore();
+    }
+
+    function startRenderLoop() {
+      function frame(now) {
+        if (document.getElementById("playerView").classList.contains("active")) {
+          renderCoachCanvas(now);
+        }
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    // =========================================================================
+    // 5. CUSTOM EXERCISE ADD / EDIT MODAL LOGIC
+    // =========================================================================
+    let editingIndex = -1;
+    let editorMode = "count";
+
+    function setEditorMode(m) {
+      editorMode = m;
+      document.getElementById("btnModeCount").className =
+        "mode-pill" + (m === "count" ? " active" : "");
+      document.getElementById("btnModeTime").className =
+        "mode-pill" + (m === "time" ? " active" : "");
+      document.getElementById("countFields").style.display = m === "count" ? "grid" : "none";
+      document.getElementById("timeFields").style.display = m === "time" ? "block" : "none";
+    }
+
+    function openEditor(idx) {
+      editingIndex = idx;
+      const list = getActiveList();
+      if (idx >= 0 && list[idx]) {
+        const ex = list[idx];
+        document.getElementById("sheetTitle").textContent = "编辑训练动作";
+        document.getElementById("fName").value = ex.name;
+        document.getElementById("fTargetCount").value = ex.type === "count" ? ex.target : 10;
+        document.getElementById("fTempo").value = ex.tempo || 2.6;
+        document.getElementById("fTargetSec").value = ex.type === "time" ? ex.target : 20;
+        document.getElementById("fAnimType").value = ex.anim || "split_squat_l";
+        document.getElementById("fDesc").value = ex.desc || "";
+        setEditorMode(ex.type || "count");
+      } else {
+        document.getElementById("sheetTitle").textContent = "添加训练动作";
+        document.getElementById("fName").value = "";
+        document.getElementById("fTargetCount").value = 10;
+        document.getElementById("fTempo").value = 2.6;
+        document.getElementById("fTargetSec").value = 20;
+        document.getElementById("fAnimType").value = "split_squat_l";
+        document.getElementById("fDesc").value = "保持核心收紧，控制发力节奏。";
+        setEditorMode("count");
+      }
+      document.getElementById("editModal").classList.add("open");
+    }
+
+    function closeEditor() {
+      document.getElementById("editModal").classList.remove("open");
+    }
+
+    function saveEditorExercise() {
+      const name = document.getElementById("fName").value.trim();
+      if (!name) return;
+
+      const anim = document.getElementById("fAnimType").value;
+      const muscleMap = {
+        split_squat_l: "左腿股四头肌 · 臀大肌",
+        split_squat_r: "右腿股四头肌 · 臀大肌",
+        glute_bridge_l: "左侧臀大肌 · 腘绳肌",
+        glute_bridge_r: "右侧臀大肌 · 腘绳肌",
+        hamstring_walkout: "大腿后侧腘绳肌群",
+        calf_raise_l: "左小腿三头肌 · 跟腱控制",
+        calf_raise_r: "右小腿三头肌 · 跟腱控制",
+        push_up: "胸大肌 · 肱三头肌 · 核心",
+        side_plank_l: "左侧腹斜肌 · 骨盆稳定",
+        side_plank_r: "右侧腹斜肌 · 骨盆稳定"
+      };
+
+      const item = {
+        name,
+        type: editorMode,
+        target:
+          editorMode === "time"
+            ? Math.max(5, Number(document.getElementById("fTargetSec").value) || 20)
+            : Math.max(1, Number(document.getElementById("fTargetCount").value) || 10),
+        tempo: Math.max(1, Number(document.getElementById("fTempo").value) || 2.6),
+        anim,
+        muscle: muscleMap[anim] || "目标肌群激活",
+        desc: document.getElementById("fDesc").value.trim() || "保持核心收紧，注意呼吸节奏。"
+      };
+
+      const list = getActiveList();
+      if (editingIndex >= 0) {
+        list[editingIndex] = item;
+      } else {
+        list.push(item);
+      }
+      persistPlans();
+      closeEditor();
+      renderHomeList();
+    }
+
+    function deleteExercise(idx) {
+      const list = getActiveList();
+      if (list.length <= 1) return;
+      list.splice(idx, 1);
+      persistPlans();
+      renderHomeList();
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      renderHomeList();
+      startRenderLoop();
+    });
+  </script>
+</body>
+</html>
