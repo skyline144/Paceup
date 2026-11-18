@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="训练">
+<meta name="theme-color" content="#ffffff">
+<title>训练</title>
+<style>
+:root{--green:#20c47f;--green2:#14a86a;--dark:#25212b;--dark2:#3a3541;--text:#1d1d1f;--sub:#8a8a8e;--bg:#f4f4f6;--line:#ececf0}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:#e9e9ee;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Segoe UI",Roboto,sans-serif;color:var(--text);-webkit-text-size-adjust:100%}
+#app{max-width:520px;margin:0 auto;min-height:100vh;background:#fff;position:relative;padding-bottom:calc(120px + env(safe-area-inset-bottom))}
+button{font:inherit;border:0;background:none;cursor:pointer;color:inherit;padding:0}
+a{color:inherit}
+.muted{color:var(--sub)}
+/* home */
+.home-h{padding:calc(18px + env(safe-area-inset-top)) 20px 6px;display:flex;justify-content:space-between;align-items:center}
+.home-h h1{font-size:30px;margin:0}
+.btn-sm{padding:8px 14px;border-radius:999px;background:var(--bg);font-size:14px}
+.resume{margin:10px 20px;padding:14px 16px;border-radius:14px;background:#eafaf2;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.resume b{display:block}
+.resume .go-sm{background:var(--green);color:#fff;border-radius:999px;padding:8px 16px;font-weight:700;white-space:nowrap}
+.pcard{margin:14px 20px;border-radius:18px;overflow:hidden;box-shadow:0 4px 18px rgba(0,0,0,.08);cursor:pointer;background:#fff}
+.pcard .cv{height:130px;padding:16px;color:#fff;position:relative;display:flex;flex-direction:column;justify-content:flex-end}
+.pcard .cv .em{font-size:64px;position:absolute;right:18px;top:14px}
+.pcard .cv .t{font-size:22px;font-weight:800}
+.pcard .cb{padding:12px 16px;font-size:14px;color:var(--sub)}
+.sec-h{padding:22px 20px 6px;font-size:18px;font-weight:700}
+.hist{margin:0 20px;border-top:1px solid var(--line)}
+.hist div{display:flex;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px;gap:10px}
+/* detail */
+.hero{height:230px;position:relative;color:#fff;display:flex;align-items:center;justify-content:center}
+.hero .em{font-size:110px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.25))}
+.hero .back{position:absolute;left:12px;top:calc(10px + env(safe-area-inset-top));width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.25);color:#fff;font-size:26px;line-height:38px}
+.hero .badge{position:absolute;left:14px;bottom:14px;background:rgba(0,0,0,.55);border-radius:999px;padding:6px 12px;font-size:13px;color:#ffd98a}
+.hero .listbtn{position:absolute;right:14px;bottom:14px;background:rgba(255,255,255,.3);border-radius:999px;padding:6px 14px;font-size:13px;color:#fff}
+.detail{padding:14px 20px}
+.series{font-size:13px;color:var(--sub);display:flex;gap:6px;align-items:center}
+.series .chip{color:#6b4cff;font-weight:600}
+.detail h1{font-size:24px;margin:10px 0 14px;line-height:1.35}
+.stats{display:flex;gap:26px;align-items:flex-end}
+.stats b{display:block;font-size:22px}
+.stats span{font-size:12px;color:var(--sub)}
+.stats .tgt{margin-left:auto;background:#eafaf2;color:var(--green2);font-size:12px;padding:6px 10px;border-radius:8px}
+.note{margin-top:14px;background:var(--bg);border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.55}
+.note.warn{background:#fff7e6}
+.seg{display:flex;background:var(--bg);border-radius:12px;padding:4px;margin-top:16px}
+.seg button{flex:1;padding:9px;border-radius:9px;font-size:15px;color:var(--sub)}
+.seg button.on{background:#fff;color:var(--text);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.seg-desc{font-size:13px;color:var(--sub);margin:8px 2px 0}
+.sect{margin-top:22px}
+.sect-h{display:flex;justify-content:space-between;align-items:baseline}
+.sect-h b{font-size:18px}
+.sect-n{font-size:13px;color:var(--sub);margin:4px 0 6px;line-height:1.5}
+.ex{border-bottom:1px solid var(--line);padding:12px 0;cursor:pointer}
+.ex .row{display:flex;gap:12px;align-items:center}
+.ex .lt{width:34px;height:34px;border-radius:10px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;font-size:14px}
+.ex .nm{font-weight:600}
+.ex .nm small{font-weight:400;color:var(--sub);margin-left:6px}
+.ex .ps{font-size:13px;color:var(--sub);margin-top:2px}
+.ex .opt{font-size:11px;background:#f0f0f3;color:var(--sub);padding:2px 6px;border-radius:6px;margin-left:6px;font-weight:400}
+.ex.skip{opacity:.38}
+.ex .more{display:none;margin:8px 0 0 46px;font-size:14px;line-height:1.6}
+.ex.open .more{display:block}
+.ex .more ul{margin:4px 0;padding-left:18px}
+.demo{display:inline-block;margin:6px 8px 0 0;font-size:13px;padding:5px 10px;border-radius:999px;background:var(--bg);text-decoration:none}
+.bottombar{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:520px;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);display:flex;align-items:center;justify-content:space-around;padding:10px 10px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);z-index:10}
+.bottombar .side{font-size:15px;display:flex;gap:6px;align-items:center;width:110px;justify-content:center}
+.gobtn{width:96px;height:96px;border-radius:50%;background:var(--green);color:#fff;font-size:34px;font-weight:900;font-style:italic;box-shadow:0 6px 18px rgba(32,196,127,.45);margin-top:-36px}
+.gobtn:active{transform:scale(.96)}
+/* modal */
+.mask{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#fff;width:100%;max-width:520px;border-radius:20px 20px 0 0;padding:18px 20px calc(20px + env(safe-area-inset-bottom));max-height:85vh;overflow:auto}
+.sheet h3{margin:0 0 12px}
+.sheet textarea{width:100%;height:240px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;border:1px solid var(--line);border-radius:10px;padding:10px}
+.sheet .opt-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.sheet input[type=number],.sheet select{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:8px;width:100px}
+.btn{display:block;width:100%;padding:13px;border-radius:12px;background:var(--bg);font-size:16px;margin-top:10px;text-align:center}
+.btn.pri{background:var(--green);color:#fff;font-weight:700}
+.btn.danger{color:#e5484d}
+.sw{position:relative;width:50px;height:30px;border-radius:15px;background:#ddd;transition:.2s}
+.sw.on{background:var(--green)}
+.sw::after{content:"";position:absolute;width:26px;height:26px;border-radius:50%;background:#fff;top:2px;left:2px;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.sw.on::after{left:22px}
+/* player */
+.player{position:fixed;top:0;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;z-index:50;display:flex;flex-direction:column;background:#f3f3f5}
+.stage{flex:1;position:relative;overflow:auto;padding:calc(10px + env(safe-area-inset-top)) 16px 14px}
+.stage.rest{background:#e9f8f1}
+.pbar{height:4px;background:#dcdce0;border-radius:2px;margin-bottom:10px;overflow:hidden}
+.pbar i{display:block;height:100%;background:var(--green);transition:width .3s}
+.ptitle{font-size:18px;font-weight:600;padding-right:56px;line-height:1.4}
+.ptitle .tg{font-size:12px;background:#fff;border-radius:6px;padding:2px 6px;margin-left:6px;color:var(--sub);vertical-align:middle}
+.sidebtns{position:absolute;right:14px;top:calc(52px + env(safe-area-inset-top));display:flex;flex-direction:column;gap:12px}
+.rbtn{width:46px;height:46px;border-radius:50%;background:rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;font-size:19px}
+.pc{margin:18px 60px 0 0}
+.pc .em{font-size:72px;line-height:1}
+.fig{display:block;width:100%;max-width:360px;height:auto;background:#fff;border-radius:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.ex .more .fig{max-width:300px;margin:4px 0 8px;background:var(--bg);box-shadow:none}
+.pc .nm{font-size:28px;font-weight:800;margin-top:10px}
+.pc .en{color:var(--sub);font-size:15px;margin-top:2px}
+.pc .meta{margin-top:10px;font-size:15px;font-weight:600;color:var(--green2)}
+.pc .presc{font-size:14px;color:var(--sub);margin-top:2px}
+.pc ul{padding-left:20px;margin:12px 0;line-height:1.65;font-size:15px}
+.chips span{display:inline-block;font-size:12px;background:#fff;border-radius:999px;padding:4px 10px;margin:0 6px 6px 0}
+.restlbl{font-size:15px;font-weight:700;color:var(--green2);letter-spacing:1px}
+.nextlbl{font-size:13px;color:var(--sub);margin-top:16px}
+.panel{background:var(--dark);color:#fff;border-radius:22px 22px 0 0;padding:8px 20px calc(18px + env(safe-area-inset-bottom))}
+.handle{display:block;width:100%;padding:0 0 12px;cursor:pointer}
+.handle::before{content:"";display:block;width:40px;height:4px;background:#5a5462;border-radius:2px;margin:0 auto}
+/* 动作开始几秒后，底部面板缩小到一半 */
+.panel,.panel .big,.panel .big .v,.panel .pstats,.panel .pstats b,.panel .ctrls,.panel .cbtn,.panel .pbtn,.panel .handle{transition:all .35s ease}
+.panel.mini .handle{padding-bottom:6px}
+.panel.mini .big{min-height:0;padding:8px 14px}
+.panel.mini .big .v{font-size:36px}
+.panel.mini .big .v small{font-size:16px}
+.panel.mini .big .l{margin-top:2px;font-size:12px}
+.panel.mini .big .acts button{padding:7px 12px;font-size:14px}
+.panel.mini .pstats{margin:8px 0 0}
+.panel.mini .pstats b{display:inline;font-size:16px;margin-right:6px}
+.panel.mini .pstats span{font-size:12px}
+.panel.mini .ctrls{margin-top:8px}
+.panel.mini .cbtn{width:42px;height:42px}
+.panel.mini .pbtn{width:52px;height:52px}
+.big{background:var(--dark2);border-radius:12px;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:92px}
+.big .v{font-size:54px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.big .v small{font-size:22px;font-weight:600;color:#aaa}
+.big .l{font-size:13px;color:#aaa;margin-top:6px}
+.big .acts{display:flex;gap:8px;flex-shrink:0}
+.big .acts button{background:#4d4756;color:#fff;border-radius:999px;padding:10px 14px;font-size:15px;font-weight:600}
+.big .acts button.ok{background:var(--green)}
+.pstats{display:flex;margin:18px 0 6px}
+.pstats div{flex:1}
+.pstats b{display:block;font-size:30px;font-variant-numeric:tabular-nums}
+.pstats span{font-size:13px;color:#aaa}
+.ctrls{display:flex;justify-content:space-between;align-items:center;margin-top:14px}
+.cbtn{width:56px;height:56px;border-radius:50%;background:#3d3845;display:flex;align-items:center;justify-content:center}
+.pbtn{width:72px;height:72px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center}
+.done{padding:calc(40px + env(safe-area-inset-top)) 24px 24px;text-align:center}
+.done .em{font-size:80px}
+.done .grid{display:flex;justify-content:space-around;margin:24px 0}
+.done .grid b{display:block;font-size:28px}
+.rpe{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:12px 0}
+.rpe button{width:44px;height:44px;border-radius:12px;background:var(--bg);font-weight:700}
+.rpe button.on{background:var(--green);color:#fff}
+.lst .it{display:flex;justify-content:space-between;padding:11px 4px;border-bottom:1px solid var(--line);cursor:pointer;font-size:15px;gap:8px}
+.lst .it.cur{color:var(--green2);font-weight:700}
+.lst .it.past{color:var(--sub)}
+.lst .gh{font-weight:700;padding:14px 4px 4px;font-size:14px;color:var(--sub)}
+</style>
+</head>
+<body>
+<div id="app"><div style="padding:40px 24px;line-height:1.7;font-size:16px">
+  <h2>训练</h2>
+  <p>当前预览不能运行这个训练程序（邮件、文件 App 的预览不支持 JavaScript）。</p>
+  <p>请用浏览器打开它的网址：在 iPhone 上用 Safari 打开链接，然后点“分享 → 添加到主屏幕”。<br>
+  在电脑上直接双击这个文件，用 Chrome / Edge / Safari 打开即可。</p>
+</div></div>
+<noscript>需要启用 JavaScript。</noscript>
+<script>
+'use strict';
+/* ================= 训练计划数据 =================
+ * 动作字段：
+ *  zh 中文名, en 英文名, sets 组数, reps 次数(数字或 [最少,最多]) 或 secs 秒数,
+ *  perSide: 'split' 左右分开做 | 'alt' 左右交替(reps 为每侧次数),
+ *  tempo 每次大约秒数(用于自动计数), met 运动强度(估算热量), rest 组间休息秒,
+ *  restAfter 本动作结束后到下一动作的休息秒, optional true = 精简版跳过,
+ *  muscles 目标肌群, cues 动作要点, note 备注, letter 编号
+ */
+const BUILTIN_PLANS = [{
+  id: 'tue-main', builtin: true,
+  title: '周二 · 主训练日', series: '最终训练计划', emoji: '⚽',
+  color: 'linear-gradient(135deg,#1fb978 0%,#0b6e57 100%)',
+  intensity: '中高', durationMin: 40,
+  rpe: '目标强度 RPE 7–8/10；大部分动作保留 2–3 次余力，不做到力竭。',
+  timeNote: '时间说明：以上是动作和组数的完整清单。为了真正控制在 40 分钟内，建议采用计时训练、减少动作间等待；如果时间不够，优先保留 A、C、D、E、G、I 和核心动作，Y-T-W 与部分辅助动作可以轮换到下一周。',
+  liteNote: '精简版：保留热身、爆发力、A C D E G I 和核心（死虫、侧平板）；B、F、H、Y-T-W 轮换到下一周。',
+  sections: [
+    { name: '热身', minutes: 5, emoji: '🏃', fixedRest: true, restAfter: 6, switchRest: 3, items: [
+      { zh: '原地慢跑', en: 'Jog in Place', secs: 60, met: 7, cues: ['放松肩膀，前脚掌着地', '逐渐提高步频'] },
+      { zh: '高抬腿', en: 'High Knees', secs: 30, met: 8, cues: ['膝盖抬至髋部高度', '手臂配合摆动，躯干直立'] },
+      { zh: '动态弓步', en: 'Walking Lunge', reps: 10, tempo: 3, met: 4, note: '左右交替，共 10 次', cues: ['步幅适中，后膝接近地面', '前膝对准脚尖，躯干直立'] },
+      { zh: '前后摆腿', en: 'Leg Swing (Front-Back)', reps: 10, perSide: 'split', tempo: 1.5, met: 3, cues: ['扶墙站稳', '腿部放松前后摆动，幅度逐渐增大'] },
+      { zh: '左右摆腿', en: 'Leg Swing (Side-Side)', reps: 10, perSide: 'split', tempo: 1.5, met: 3, cues: ['面向墙扶墙', '腿在身前左右摆动，幅度逐渐增大'] },
+      { zh: '深蹲', en: 'Bodyweight Squat', reps: 10, tempo: 2.5, met: 5, cues: ['脚与肩同宽，膝盖对准脚尖', '臀部向后坐，背部挺直'] },
+      { zh: '踝关节活动', en: 'Ankle Mobility', secs: 30, met: 2.5, cues: ['踝关节绕环、勾脚绷脚', '两侧交替'] },
+    ]},
+    { name: '爆发力', minutes: 5, emoji: '⚡', rest: 45, restAfter: 60,
+      note: '两个动作之间充分休息。重点是动作质量，不是把自己跳累。', items: [
+      { zh: '深蹲跳', en: 'Squat Jump', sets: 3, reps: 3, tempo: 4, met: 8, cues: ['半蹲后尽量快速起跳', '落地轻柔：前脚掌先着地，屈膝缓冲', '每次落地站稳再跳下一次'] },
+      { zh: '滑冰跳', en: 'Skater Jump', sets: 2, reps: 3, perSide: 'alt', tempo: 2.5, met: 8, note: '训练横向爆发力和单脚稳定性', cues: ['向侧方蹬地跳出，对侧单脚落地', '落地稳定 1 秒再跳回', '膝盖对准脚尖，不内扣'] },
+    ]},
+    { name: '力量训练', minutes: 22, emoji: '🏋️', rest: 40, restAfter: 20, switchRest: 6,
+      note: '组间休息约 30–45 秒；单侧动作两边都做。', items: [
+      { letter: 'A', zh: '分腿蹲', en: 'Split Squat', sets: 2, reps: 8, perSide: 'split', tempo: 4.5, met: 5, muscles: ['股四头肌', '臀大肌'], cues: ['下降 3 秒，起身 1 秒', '保持躯干稳定直立，前膝对准脚尖', '后膝接近地面但不触地'] },
+      { letter: 'B', zh: '俯卧撑', en: 'Push-up', sets: 2, reps: [10, 15], tempo: 2.5, met: 5, optional: true, muscles: ['胸', '肩', '三头肌', '核心'], cues: ['身体从头到脚成一直线', '下降至胸部接近地面', '肘部与身体约 45°'] },
+      { letter: 'C', zh: '腘绳肌行走', en: 'Hamstring Walkout', sets: 2, reps: 5, tempo: 7, met: 4, muscles: ['腘绳肌', '臀部'], cues: ['从臀桥姿势开始，臀部抬起', '脚跟交替小步向前走出，再走回来', '全程髋部不要掉下来'] },
+      { letter: 'D', zh: '反向北欧挺', en: 'Reverse Nordic Curl', sets: 2, reps: 5, tempo: 5, met: 4, muscles: ['股四头肌', '膝伸肌群'], cues: ['跪姿，膝下垫软垫，膝到头成一直线', '缓慢向后倾，只做舒适幅度', '大腿前侧发力回到直立'] },
+      { letter: 'E', zh: '侧卧髋内收', en: 'Side-lying Hip Adduction', sets: 2, reps: 10, perSide: 'split', tempo: 2.5, met: 3, muscles: ['大腿内收肌'], note: '帮助足球中的变向和稳定', cues: ['侧卧，上方腿屈膝放在身前', '下方腿伸直向上抬起，顶端停 1 秒', '缓慢放下'] },
+      { letter: 'F', zh: '侧卧髋外展', en: 'Side-lying Hip Abduction', sets: 2, reps: 12, perSide: 'split', tempo: 2.5, met: 3, optional: true, muscles: ['臀中肌'], note: '帮助单腿支撑和骨盆稳定', cues: ['侧卧，下方腿可微屈', '上方腿伸直、脚尖略朝下，向上抬起', '骨盆不要向后翻'] },
+      { letter: 'G', zh: '直膝提踵', en: 'Straight-knee Calf Raise', sets: 2, reps: 12, perSide: 'split', tempo: 3, met: 3.5, muscles: ['腓肠肌'], note: '跑动和蹬地的重要肌肉', cues: ['单脚站立，可扶墙保持平衡', '膝盖伸直，脚跟尽量抬高，顶端停 1 秒', '缓慢下放；站台阶可增加幅度'] },
+      { letter: 'H', zh: '屈膝提踵', en: 'Bent-knee Calf Raise', sets: 2, reps: 15, tempo: 2.5, met: 3.5, optional: true, muscles: ['比目鱼肌'], note: '增强持续跑动和踝关节支撑能力', cues: ['双脚站立，膝盖保持弯曲', '保持屈膝的同时抬起脚跟', '缓慢下放'] },
+      { letter: 'I', zh: '胫骨前肌抬起', en: 'Tibialis Raise', sets: 2, reps: 15, tempo: 2, met: 3, muscles: ['胫骨前肌'], note: '强化小腿前侧和踝关节控制', cues: ['背靠墙站立，脚跟离墙约一脚长', '脚跟着地，脚尖尽量勾起', '缓慢放下，脚尖不触地连续做'] },
+    ]},
+    { name: '核心与上背', minutes: 6, emoji: '🧘', rest: 30, restAfter: 15, switchRest: 6,
+      note: '上背动作主要练肩胛控制；严格无器械的条件下，无法充分替代划船等背部拉力训练。', items: [
+      { zh: '死虫', en: 'Dead Bug', sets: 2, reps: 8, perSide: 'alt', tempo: 3, met: 3.5, muscles: ['核心'], cues: ['仰卧，手臂向上，髋膝 90°', '腰背贴地，对侧手脚同时缓慢伸展', '呼气伸展，回位后换边'] },
+      { zh: '侧平板支撑', en: 'Side Plank', sets: 2, secs: 25, perSide: 'split', met: 4, muscles: ['核心', '腹斜肌'], cues: ['肘在肩正下方', '身体从头到脚一条直线', '髋部不要下沉'] },
+      { zh: '俯卧 Y', en: 'Prone Y Raise', reps: 6, tempo: 3, met: 3, optional: true, restAfter: 8, muscles: ['下斜方肌', '肩胛控制'], cues: ['俯卧，手臂伸直成 Y 形，拇指朝上', '抬起手臂，肩胛向后下方收紧', '顶端停 1 秒'] },
+      { zh: '俯卧 T', en: 'Prone T Raise', reps: 6, tempo: 3, met: 3, optional: true, restAfter: 8, muscles: ['中斜方肌', '菱形肌'], cues: ['手臂侧平举成 T 形，拇指朝上', '抬起手臂，夹紧肩胛', '顶端停 1 秒'] },
+      { zh: '俯卧 W', en: 'Prone W Raise', reps: 6, tempo: 3, met: 3, optional: true, muscles: ['肩袖', '肩胛控制'], cues: ['屈肘成 W 形', '抬起手臂，肩胛向后下方收紧', '顶端停 1 秒'] },
+    ]},
+  ],
+}];
+
+/* ================= 存储 ================= */
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('trainer.' + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('trainer.' + k, JSON.stringify(v)); } catch (e) {} },
+  del(k) { try { localStorage.removeItem('trainer.' + k); } catch (e) {} },
+};
+const settings = Object.assign({ voice: true, beep: true, autoCount: true, weight: 70, setRest: 0 }, store.get('settings', {}));
+const saveSettings = () => store.set('settings', settings);
+const modes = store.get('modes', {});
+
+const $ = s => document.querySelector(s);
+const app = $('#app');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = s => { s = Math.max(0, Math.floor(s)); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = s % 60; return (h ? h + ':' + String(m).padStart(2, '0') : String(m).padStart(2, '0')) + ':' + String(x).padStart(2, '0'); };
+
+function allPlans() { return BUILTIN_PLANS.concat(store.get('customPlans', [])); }
+function getPlan(id) { return allPlans().find(p => p.id === id); }
+
+/* ================= 动作 / 步骤 ================= */
+const repHi = ex => Array.isArray(ex.reps) ? ex.reps[1] : ex.reps;
+const repLabel = ex => Array.isArray(ex.reps) ? ex.reps.join('–') : ex.reps;
+const target = ex => ex.perSide === 'alt' ? repHi(ex) * 2 : repHi(ex);
+const workDur = ex => ex.secs ? ex.secs : target(ex) * (ex.tempo || 3) + 2.5;
+function amount(ex) {
+  const side = ex.perSide ? '每侧 ' : '';
+  return ex.secs ? side + ex.secs + ' 秒' : side + repLabel(ex) + ' 次';
+}
+const prescription = ex => ((ex.sets || 1) > 1 ? ex.sets + ' 组 × ' : '') + amount(ex);
+
+function buildSteps(plan, mode) {
+  const steps = [];
+  let pending = { type: 'rest', kind: 'start', secs: 10 };
+  plan.sections.forEach(sec => {
+    sec.items.filter(ex => mode !== 'lite' || !ex.optional).forEach(ex => {
+      if (pending) steps.push(pending);
+      const sets = ex.sets || 1;
+      const sides = ex.perSide === 'split' ? ['左侧', '右侧'] : [null];
+      const setRest = (settings.setRest && !sec.fixedRest) ? settings.setRest : (ex.rest ?? sec.rest ?? 40);
+      for (let s = 1; s <= sets; s++) {
+        sides.forEach((side, k) => {
+          if (k > 0) steps.push({ type: 'rest', kind: 'switch', secs: ex.switchRest ?? sec.switchRest ?? 6 });
+          steps.push({ type: 'work', ex, sec, set: s, sets, side });
+        });
+        if (s < sets) steps.push({ type: 'rest', kind: 'set', secs: setRest });
+      }
+      pending = { type: 'rest', kind: 'next', secs: ex.restAfter ?? sec.restAfter ?? 20 };
+    });
+  });
+  let n = 0;
+  steps.forEach(s => { if (s.type === 'work') s.workNo = ++n; });
+  steps.forEach((s, i) => { s.works = n; if (s.type === 'rest') s.nextWork = steps.slice(i + 1).find(x => x.type === 'work'); });
+  return steps;
+}
+function estimate(steps) {
+  let secs = 0, kcal = 0;
+  steps.forEach(s => {
+    const d = s.type === 'rest' ? s.secs : workDur(s.ex);
+    secs += d;
+    kcal += (s.type === 'rest' ? 2 : (s.ex.met || 5)) * 3.5 * settings.weight / 200 * d / 60;
+  });
+  return { secs, kcal: Math.round(kcal) };
+}
+
+/* ================= 声音 ================= */
+let actx = null, zhVoice = null;
+function beep(freq = 880, dur = 0.12, vol = 0.35) {
+  if (!settings.beep) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state === 'suspended') actx.resume();
+    const o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+    o.frequency.value = freq; o.connect(g); g.connect(actx.destination);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    o.start(t); o.stop(t + dur + 0.02);
+  } catch (e) {}
+}
+let voiceList = [];
+const isZh = v => /^(zh|cmn|yue)/i.test(v.lang) || /chinese|mandarin|中文|普通话/i.test(v.name);
+function pickVoice() {
+  voiceList = speechSynthesis.getVoices();
+  const zh = voiceList.filter(isZh);
+  zhVoice = voiceList.find(v => v.name === settings.voiceName)
+    || zh.find(v => /zh[-_]CN/i.test(v.lang)) || zh[0] || null;
+}
+// 浏览器有语音列表但没有中文语音时，中文播报会无声或乱读
+const noZhVoice = () => voiceList.length > 0 && !voiceList.some(isZh) && !settings.voiceName;
+if ('speechSynthesis' in window) {
+  pickVoice();
+  speechSynthesis.onvoiceschanged = () => { pickVoice(); if (!P && !$('#mask')) route(); };
+}
+function say(text, interrupt = true) {
+  if (!settings.voice || !('speechSynthesis' in window) || noZhVoice()) return;
+  try {
+    if (interrupt) speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(text);
+    if (zhVoice) { u.voice = zhVoice; u.lang = zhVoice.lang; } else u.lang = 'zh-CN';
+    u.rate = 1.05;
+    speechSynthesis.speak(u);
+  } catch (e) {}
+}
+
+/* 屏幕常亮 */
+let wakeLock = null;
+async function lockOn() {
+  try { if ('wakeLock' in navigator && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } } catch (e) {}
+}
+function lockOff() { try { wakeLock && wakeLock.release(); } catch (e) {} wakeLock = null; }
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && P) lockOn(); });
+
+/* ================= 弹窗 ================= */
+function modal(html) {
+  closeModal();
+  const m = document.createElement('div');
+  m.className = 'mask'; m.id = 'mask';
+  m.innerHTML = `<div class="sheet">${html}</div>`;
+  m.addEventListener('click', e => { if (e.target === m) closeModal(); });
+  document.body.appendChild(m);
+}
+function closeModal() { const m = $('#mask'); if (m) m.remove(); }
+
+/* ================= 路由 ================= */
+function go(h) { if (location.hash === h) route(); else location.hash = h; }
+window.addEventListener('hashchange', route);
+function route() {
+  const h = location.hash || '#/';
+  const m = h.match(/^#\/plan\/(.+)$/);
+  window.scrollTo(0, 0);
+  if (m) renderPlan(decodeURIComponent(m[1])); else renderHome();
+}
+
+/* ================= 首页 ================= */
+function renderHome() {
+  const plans = allPlans();
+  const sess = store.get('session', null);
+  const sp = sess && getPlan(sess.planId);
+  const hist = store.get('history', []);
+  const weekStart = (() => { const d = new Date(); d.setHours(0, 0, 0, 0); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d.getTime(); })();
+  const thisWeek = hist.filter(h => h.ts >= weekStart).length;
+  app.innerHTML = `
+  <div class="home-h"><h1>训练</h1><button class="btn-sm" onclick="importDialog()">＋ 导入计划</button></div>
+  ${sp ? `<div class="resume"><div><b>继续上次训练</b><span class="muted" style="font-size:13px">${esc(sp.title)} · 已练 ${fmt(sess.total)}</span></div>
+     <button class="go-sm" onclick="resumeSession()">继续</button></div>` : ''}
+  ${plans.map(p => {
+    const est = estimate(buildSteps(p, modes[p.id] || 'full'));
+    return `<div class="pcard" onclick="go('#/plan/${encodeURIComponent(p.id)}')">
+      <div class="cv" style="background:${esc(p.color || 'linear-gradient(135deg,#5b8def,#3346b8)')}"><div class="em">${esc(p.emoji || '💪')}</div>
+        <div style="font-size:13px;opacity:.85">${esc(p.series || '自定义计划')}</div><div class="t">${esc(p.title)}</div></div>
+      <div class="cb">${esc(p.intensity || '')}${p.intensity ? '强度 · ' : ''}约 ${Math.round(est.secs / 60)} 分钟 · ≈${est.kcal} 千卡${p.builtin ? '' : ' · 自定义'}</div></div>`;
+  }).join('')}
+  <div class="sec-h">训练记录 <span class="muted" style="font-size:13px;font-weight:400">本周 ${thisWeek} 次</span></div>
+  <div class="hist">${hist.length ? hist.slice(-15).reverse().map(h => `<div><span>${esc(new Date(h.ts).toLocaleDateString())} ${esc(h.title)}${h.mode === 'lite' ? '（精简）' : ''}</span>
+    <span class="muted">${fmt(h.secs)} · ${h.kcal}千卡${h.rpe ? ' · RPE ' + h.rpe : ''}</span></div>`).join('') : '<div class="muted">还没有记录，开始第一次训练吧</div>'}</div>`;
+}
+
+/* ================= 计划详情 ================= */
+function renderPlan(id) {
+  const plan = getPlan(id);
+  if (!plan) return go('#/');
+  const mode = modes[id] || 'full';
+  const hasLite = plan.sections.some(s => s.items.some(e => e.optional));
+  const steps = buildSteps(plan, mode);
+  const est = estimate(steps);
+  app.innerHTML = `
+  <div class="hero" style="background:${esc(plan.color || 'linear-gradient(135deg,#5b8def,#3346b8)')}">
+    <button class="back" onclick="go('#/')">‹</button>
+    <div class="em">${esc(plan.emoji || '💪')}</div>
+    <div class="badge">◆ ${esc(plan.series || '自定义')}</div>
+    <button class="listbtn" onclick="document.getElementById('exlist').scrollIntoView({behavior:'smooth'})">☰ 动作列表</button>
+  </div>
+  <div class="detail">
+    <div class="series"><span class="chip">▣ 系列</span>${esc(plan.series || '')}</div>
+    <h1>${esc(plan.title)}</h1>
+    <div class="stats">
+      <div><b>${esc(plan.intensity || '-')}</b><span>强度</span></div>
+      <div><b>${Math.round(est.secs / 60)}</b><span>分钟(估算)</span></div>
+      <div><b>≈${est.kcal}</b><span>千卡</span></div>
+      ${plan.durationMin ? `<div class="tgt">目标 ${plan.durationMin} 分钟</div>` : ''}
+    </div>
+    ${settings.voice && noZhVoice() ? `<div class="note warn" style="font-size:13px">⚠ 当前浏览器没有中文语音，训练时不会播报动作名（只有提示音）。建议用 Chrome、Edge 或 Safari，或在 <a href="javascript:settingsDialog()">训练设置</a> 里查看解决办法。</div>` : ''}
+    ${plan.rpe ? `<div class="note">${esc(plan.rpe)}</div>` : ''}
+    ${hasLite ? `<div class="seg"><button class="${mode === 'full' ? 'on' : ''}" onclick="setMode('${esc(id)}','full')">完整版</button><button class="${mode === 'lite' ? 'on' : ''}" onclick="setMode('${esc(id)}','lite')">精简版</button></div>
+      <div class="seg-desc">${mode === 'lite' ? esc(plan.liteNote || '跳过标记为可省的动作') : '完整清单（含所有辅助动作）。估算时间按实际节奏和休息计算。'}</div>` : ''}
+    <div id="exlist">
+    ${plan.sections.map((sec, si) => `
+      <div class="sect"><div class="sect-h"><b>${si + 1}. ${esc(sec.name)}</b>${sec.minutes ? `<span class="muted">${sec.minutes} 分钟</span>` : ''}</div>
+      ${sec.note ? `<div class="sect-n">${esc(sec.note)}</div>` : ''}
+      ${sec.items.map(ex => {
+        const skip = mode === 'lite' && ex.optional;
+        const q = encodeURIComponent((ex.en || ex.zh) + (ex.en ? ' exercise' : ''));
+        const qb = encodeURIComponent(ex.zh + ' ' + (ex.en || '') + ' 动作');
+        return `<div class="ex${skip ? ' skip' : ''}" onclick="this.classList.toggle('open')">
+          <div class="row"><div class="lt">${esc(ex.letter || sec.emoji || '•')}</div>
+          <div style="flex:1"><div class="nm">${esc(ex.zh)}<small>${esc(ex.en || '')}</small>${ex.optional ? `<span class="opt">${skip ? '本次跳过' : '可轮换'}</span>` : ''}</div>
+          <div class="ps">${esc(prescription(ex))}${ex.muscles ? ' · ' + esc(ex.muscles.join('、')) : ''}</div></div><span class="muted">›</span></div>
+          <div class="more">${animBox(ex, false)}${ex.note ? `<div>${esc(ex.note)}</div>` : ''}
+            ${ex.cues ? `<ul>${ex.cues.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}
+            <a class="demo" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener" onclick="event.stopPropagation()">▶ YouTube 示范</a>
+            <a class="demo" href="https://search.bilibili.com/all?keyword=${qb}" target="_blank" rel="noopener" onclick="event.stopPropagation()">▶ B站 示范</a>
+          </div></div>`;
+      }).join('')}</div>`).join('')}
+    </div>
+    ${plan.timeNote ? `<div class="note warn">${esc(plan.timeNote)}</div>` : ''}
+    <div style="display:flex;gap:10px;margin-top:16px">
+      <button class="btn" onclick="exportDialog('${esc(id)}')">导出 JSON</button>
+      ${plan.builtin ? '' : `<button class="btn danger" onclick="deletePlan('${esc(id)}')">删除此计划</button>`}
+    </div>
+  </div>
+  <div class="bottombar">
+    <button class="side" onclick="settingsDialog()">⚙︎ 训练设置</button>
+    <button class="gobtn" onclick="startWorkout('${esc(id)}')">GO</button>
+    <button class="side" onclick="exportDialog('${esc(id)}')">⇪ 分享</button>
+  </div>`;
+}
+function setMode(id, m) { modes[id] = m; store.set('modes', modes); renderPlan(id); }
+
+/* ================= 设置 / 导入导出 ================= */
+function settingsDialog() {
+  const sw = (k, label, sub) => `<div class="opt-row"><div>${label}${sub ? `<div class="muted" style="font-size:12px">${sub}</div>` : ''}</div>
+    <button class="sw ${settings[k] ? 'on' : ''}" onclick="settings['${k}']=!settings['${k}'];saveSettings();this.classList.toggle('on')"></button></div>`;
+  modal(`<h3>训练设置</h3>
+    ${sw('voice', '语音播报', '动作名、计数、休息提示（iPhone 请关闭静音开关）')}
+    <div class="opt-row"><div>播报声音<div class="muted" style="font-size:12px">${voiceList.some(isZh) ? '已找到中文语音' : '<span style="color:#e5484d">此浏览器没有中文语音</span>'}</div></div>
+      <div style="display:flex;gap:8px;align-items:center"><select style="width:150px" onchange="settings.voiceName=this.value;saveSettings();pickVoice()">
+        <option value="">自动（中文）</option>
+        ${voiceList.slice().sort((a, b) => isZh(b) - isZh(a)).map(v => `<option value="${esc(v.name)}" ${settings.voiceName === v.name ? 'selected' : ''}>${isZh(v) ? '🇨🇳 ' : ''}${esc(v.name)} (${esc(v.lang)})</option>`).join('')}
+      </select><button class="btn-sm" onclick="const o=settings.voice;settings.voice=true;say('分腿蹲，左侧，8次，开始');settings.voice=o">试听</button></div></div>
+    ${noZhVoice() ? `<div class="note warn" style="font-size:13px">没有中文语音，所以不会播报，只有提示音。请用 Chrome / Edge / Safari，或在系统里安装中文语音：<br>
+      · Windows：设置 → 时间和语言 → 语音 → 添加语音 → 中文(简体)，然后重启浏览器<br>
+      · Mac：系统设置 → 辅助功能 → 朗读内容 → 系统声音 → 管理声音 → 中文<br>
+      · Linux：安装 speech-dispatcher 的中文语音（如 espeak-ng 的 cmn），音质较差</div>` : ''}
+    ${sw('beep', '提示音', '倒计时 3-2-1 嘀声')}
+    ${sw('autoCount', '自动计数', '按动作节奏自动数次数并进入下一步；关闭后需手动点"完成"')}
+    <div class="opt-row"><div>体重 (kg)<div class="muted" style="font-size:12px">用于估算热量</div></div>
+      <input type="number" min="30" max="200" value="${settings.weight}" onchange="settings.weight=+this.value||70;saveSettings()"></div>
+    <div class="opt-row"><div>组间休息<div class="muted" style="font-size:12px">热身除外</div></div>
+      <select onchange="settings.setRest=+this.value;saveSettings()">
+        ${[[0, '按计划'], [30, '30 秒'], [45, '45 秒'], [60, '60 秒'], [90, '90 秒']].map(([v, l]) => `<option value="${v}" ${settings.setRest === v ? 'selected' : ''}>${l}</option>`).join('')}
+      </select></div>
+    <button class="btn pri" onclick="closeModal();if(!P)route()">完成</button>`);
+}
+const EXAMPLE = {
+  title: '周四 · 恢复跑后拉伸', series: '我的计划', emoji: '🧘', intensity: '低', durationMin: 15,
+  sections: [{ name: '拉伸', rest: 10, restAfter: 10, items: [
+    { zh: '弓步拉伸髋屈肌', en: 'Hip Flexor Stretch', secs: 40, perSide: 'split', cues: ['后腿膝盖着地', '骨盆前推'] },
+    { zh: '臀桥', en: 'Glute Bridge', sets: 2, reps: 12, tempo: 3, muscles: ['臀大肌'] },
+  ] }],
+};
+function importDialog() {
+  modal(`<h3>导入训练计划</h3>
+    <div class="muted" style="font-size:13px;margin-bottom:8px;line-height:1.5">粘贴 JSON（单个计划或计划数组）。可以把下面的示例格式发给 AI，让它按格式生成新计划。<br>
+    字段：sets 组数，reps 次数 / secs 秒数，perSide "split"=左右分开 / "alt"=左右交替，tempo 每次秒数，rest 组间休息，optional 精简版跳过。</div>
+    <textarea id="imp" placeholder='${esc(JSON.stringify(EXAMPLE, null, 2))}'></textarea>
+    <button class="btn" onclick="document.getElementById('imp').value=${esc(JSON.stringify(JSON.stringify(EXAMPLE, null, 2)))}">填入示例</button>
+    <button class="btn pri" onclick="doImport()">导入</button>`);
+}
+function validatePlan(p) {
+  if (!p || typeof p !== 'object') throw new Error('不是有效的计划对象');
+  if (!p.title) throw new Error('缺少 title');
+  if (!Array.isArray(p.sections) || !p.sections.length) throw new Error(p.title + '：缺少 sections');
+  p.sections.forEach((s, i) => {
+    if (!s.name) s.name = '第 ' + (i + 1) + ' 部分';
+    if (!Array.isArray(s.items) || !s.items.length) throw new Error(s.name + '：缺少 items');
+    s.items.forEach(ex => {
+      ex.zh = ex.zh || ex.name;
+      if (!ex.zh) throw new Error(s.name + '：有动作缺少 zh 名称');
+      if (!ex.secs && !ex.reps) throw new Error(ex.zh + '：需要 reps 或 secs');
+    });
+  });
+  delete p.builtin;
+  p.id = p.id && !getPlan(p.id) ? p.id : 'custom-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
+  return p;
+}
+function doImport() {
+  try {
+    let data = JSON.parse($('#imp').value);
+    if (!Array.isArray(data)) data = [data];
+    const list = store.get('customPlans', []);
+    data.forEach(p => list.push(validatePlan(p)));
+    store.set('customPlans', list);
+    closeModal(); alert('已导入 ' + data.length + ' 个计划'); go('#/');
+  } catch (e) { alert('导入失败：' + e.message); }
+}
+function exportDialog(id) {
+  const p = JSON.parse(JSON.stringify(getPlan(id))); delete p.builtin;
+  modal(`<h3>导出计划</h3><textarea id="exp" readonly>${esc(JSON.stringify(p, null, 2))}</textarea>
+    <button class="btn pri" onclick="copyExport()">复制</button><button class="btn" onclick="closeModal()">关闭</button>`);
+}
+function copyExport() {
+  const t = $('#exp'); t.select();
+  const done = () => alert('已复制');
+  if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(t.value).then(done, () => { document.execCommand('copy'); done(); });
+  else { document.execCommand('copy'); done(); }
+}
+function deletePlan(id) {
+  if (!confirm('删除这个计划？')) return;
+  store.set('customPlans', store.get('customPlans', []).filter(p => p.id !== id));
+  go('#/');
+}
+
+/* ================= 动作动画（火柴人） =================
+ * 每个动作 = 若干关键姿势 [pose, 过渡秒数]，循环播放；动画速度按动作的 tempo 与计数同步。
+ * 角度约定：0 = 竖直向下，90 = 向前(右)，180 = 向上，-90 = 向后(左)。
+ * t 躯干(髋→颈)，ua/fa 上臂/前臂，th/sh 大腿/小腿，ft 脚掌(90 = 平放)，后缀 1 = 近侧/左，2 = 远侧/右。
+ * view: side 侧视 | front 正视(含侧卧) | top 俯视；anchor 固定不动的关节；自动贴地。
+ */
+const RAD = Math.PI / 180;
+const dirv = a => [Math.sin(a * RAD), Math.cos(a * RAD)];
+const mv = (p, a, L) => { const d = dirv(a); return [p[0] + d[0] * L, p[1] + d[1] * L]; };
+const LEN = { torso: 40, neck: 13, head: 9, ua: 22, fa: 20, th: 30, sh: 29 };
+const GY = 152, VW = 240, VH = 170;
+const BASE = { t: 180, hd: 0, ua1: 6, fa1: 10, ua2: -6, fa2: -2, th1: 2, sh1: 2, ft1: 90, th2: -2, sh2: -2, ft2: 90, x: 0, air: 0, lift: 0 };
+const BASEF = { ...BASE, ua1: -12, fa1: -8, ua2: 12, fa2: 8, th1: -3, sh1: -3, th2: 3, sh2: 3, ft1: -90, ft2: 90 };
+
+function solve(p, view) {
+  const front = view !== 'side';
+  const H = [0, 0], d = dirv(p.t), perp = [-d[1], d[0]];
+  const N = mv(H, p.t, LEN.torso), C = mv(N, p.t + p.hd, LEN.neck);
+  const off = (pt, k) => [pt[0] + perp[0] * k, pt[1] + perp[1] * k];
+  const J = { H, N, C, S1: front ? off(N, -9) : N, S2: front ? off(N, 9) : N, H1: front ? off(H, -6) : H, H2: front ? off(H, 6) : H };
+  [1, 2].forEach(i => {
+    J['E' + i] = mv(J['S' + i], p['ua' + i], LEN.ua); J['W' + i] = mv(J['E' + i], p['fa' + i], LEN.fa);
+    J['K' + i] = mv(J['H' + i], p['th' + i], LEN.th); J['A' + i] = mv(J['K' + i], p['sh' + i], LEN.sh);
+    const fd = dirv(p['ft' + i]), dn = [-fd[1], fd[0]], A = J['A' + i];
+    J['heel' + i] = [A[0] + dn[0] * 3 - fd[0] * 3, A[1] + dn[1] * 3 - fd[1] * 3];
+    J['toe' + i] = [A[0] + dn[0] * 3 + fd[0] * 10, A[1] + dn[1] * 3 + fd[1] * 10];
+  });
+  return J;
+}
+function place(a, p) {
+  const J = solve(p, a.view || 'side'), anc = J[a.anchor || 'H'];
+  const dx = (a.ax ?? 120) - anc[0] + (p.x || 0);
+  let dy;
+  if (a.view === 'top') dy = (a.ay ?? 92) - anc[1];
+  else {
+    let maxY = J.C[1] + LEN.head;
+    for (const k in J) if (k !== 'C' && J[k][1] > maxY) maxY = J[k][1];
+    dy = GY - 4 - maxY - (p.air || 0);
+  }
+  for (const k in J) J[k] = [J[k][0] + dx, J[k][1] + dy];
+  return J;
+}
+function figSVG(a, p) {
+  const J = place(a, p), v = a.view || 'side', hl = a.hl || [];
+  const DARK = '#2d3340', FAR = v === 'side' ? '#aab1bd' : '#4a5263', HL = '#20c47f';
+  const f = n => n.toFixed(1);
+  const ln = (A, B, w, c) => `<line x1="${f(A[0])}" y1="${f(A[1])}" x2="${f(B[0])}" y2="${f(B[1])}" stroke="${c}" stroke-width="${w}" stroke-linecap="round"/>`;
+  const col = (seg, c) => hl.includes(seg) ? HL : c;
+  const limb = i => { const c = i === 1 ? DARK : FAR, aw = 6 + (p.lift || 0) * 1.5;
+    return [ln(J['H' + i], J['K' + i], 8, col('th' + i, c)) + ln(J['K' + i], J['A' + i], 7, col('sh' + i, c)) + ln(J['heel' + i], J['toe' + i], 5, col('ft' + i, c)),
+            ln(J['S' + i], J['E' + i], aw, col('ua' + i, c)) + ln(J['E' + i], J['W' + i], aw - 1, col('fa' + i, c))]; };
+  const L1 = limb(1), L2 = limb(2);
+  let s = '';
+  if (v === 'top') s += `<rect x="62" y="6" width="116" height="160" rx="14" fill="#dff3e9"/><text x="${VW - 8}" y="16" text-anchor="end" font-size="11" fill="#8a8a8e">俯视图</text>`;
+  if (a.mat) s += `<rect x="${a.mat[0]}" y="${GY - 3}" width="${a.mat[1]}" height="7" rx="3" fill="#bfead6"/>`;
+  if (a.wall) {
+    const wx = a.wall === 'back' ? Math.min(J.N[0], J.H[0]) - 6 : a.wall;
+    s += `<rect x="${a.wall === 'back' ? wx - 8 : wx}" y="8" width="8" height="${GY - 8}" fill="#d5d8de"/>`;
+  }
+  if (v !== 'top') s += ln([8, GY + 1], [VW - 8, GY + 1], 2, '#d0d4da');
+  if (p.lift > 0.01) { const o = p.lift * 6, sh = q => [q[0] + o, q[1] + o];
+    [1, 2].forEach(i => { s += ln(sh(J['S' + i]), sh(J['E' + i]), 6, 'rgba(0,0,0,.13)') + ln(sh(J['E' + i]), sh(J['W' + i]), 5, 'rgba(0,0,0,.13)'); }); }
+  const torso = ln(J.H, J.N, v === 'side' ? 10 : 15, col('t', DARK)) + (v !== 'side' ? ln(J.S1, J.S2, 7, DARK) + ln(J.H1, J.H2, 8, DARK) : '');
+  const head = `<circle cx="${f(J.C[0])}" cy="${f(J.C[1])}" r="${LEN.head}" fill="${DARK}"/>`;
+  s += v === 'side' ? L2[0] + L2[1] + torso + head + L1[0] + L1[1] : L2[0] + L1[0] + torso + head + L1[1] + L2[1];
+  return s;
+}
+const cycleLen = a => a.frames.reduce((s, x) => s + x[1], 0);
+const ease = u => u < .5 ? 2 * u * u : 1 - Math.pow(-2 * u + 2, 2) / 2;
+function poseAt(a, t) {
+  const base = { ...(a.view && a.view !== 'side' ? BASEF : BASE), ...(a.base || {}) };
+  const fr = a._f || (a._f = a.frames.map(([p, d]) => [{ ...base, ...p }, d]));
+  const T = cycleLen(a);
+  t = ((t % T) + T) % T;
+  for (let i = 0; i < fr.length; i++) {
+    const [p, d] = fr[i];
+    if (t <= d || i === fr.length - 1) {
+      const q = fr[(i + 1) % fr.length][0], u = ease(Math.min(1, t / d)), o = {};
+      for (const k in p) o[k] = p[k] + (q[k] - p[k]) * u;
+      return o;
+    }
+    t -= d;
+  }
+}
+const swapLR = p => { const o = {}; for (const k in p) { const m = k.match(/^(.+?)([12])$/); o[m ? m[1] + (m[2] === '1' ? '2' : '1') : k] = p[k]; } return o; };
+const mirrorF = p => { const o = swapLR(p); for (const k in o) if (/^(ua|fa|th|sh|ft)[12]$/.test(k)) o[k] = -o[k]; if ('t' in o) o.t = 360 - o.t; if ('x' in o) o.x = -o.x; return o; };
+const HIPS = { ua1: -25, fa1: 27, ua2: -25, fa2: 27 };
+
+const ANIMS = (() => {
+  const A = {};
+  { const R = { t: 176, th1: 45, sh1: -30, th2: -10, sh2: -45, ft2: 60, ua1: -35, fa1: 45, ua2: 35, fa2: 115, air: 3 };
+    A['jog in place'] = { anchor: 'H', frames: [[R, .32], [swapLR(R), .32]], reps: 2 }; }
+  { const R = { t: 178, th1: 90, sh1: 0, ft1: 110, th2: 0, sh2: -5, ft2: 65, ua1: -40, fa1: 40, ua2: 50, fa2: 130, air: 4 };
+    A['high knees'] = { anchor: 'H', frames: [[R, .28], [swapLR(R), .28]], reps: 2, hl: ['th1'] }; }
+  { const S = { ...HIPS }, L = { th1: 80, sh1: 0, th2: -12, sh2: -95, ft2: 40, ...HIPS };
+    A['walking lunge'] = { anchor: 'H', reps: 2, hl: ['th1'], frames: [[S, .3], [S, .9], [L, .3], [L, .9], [S, .3], [S, .9], [swapLR(L), .3], [swapLR(L), .9]] }; }
+  A['leg swing (front-back)'] = { anchor: 'A2', ax: 110, wall: 156, base: { th2: 0, sh2: 0, ua1: 70, fa1: 85, ua2: 70, fa2: 85 },
+    frames: [[{ th1: 65, sh1: 55, ft1: 130 }, .75], [{ th1: -35, sh1: -40, ft1: 60 }, .75]], hl: ['th1'] };
+  A['leg swing (side-side)'] = { view: 'front', anchor: 'A2', ax: 128, base: { th2: 3, sh2: 3, ua1: -40, fa1: -30, ua2: 40, fa2: 30 },
+    frames: [[{ th1: -40, sh1: -40 }, .75], [{ th1: 28, sh1: 28 }, .75]], hl: ['th1'] };
+  { const SQ = { t: 145, th1: 85, sh1: -28, th2: 85, sh2: -28, ua1: 90, fa1: 90, ua2: 86, fa2: 88 };
+    A['bodyweight squat'] = { anchor: 'A1', ax: 125, hl: ['th1'], frames: [[{}, .3], [{}, 1], [SQ, .2], [SQ, 1]] }; }
+  A['ankle mobility'] = { anchor: 'A2', ax: 115, hl: ['ft1'], base: { th1: 40, sh1: 15, ...HIPS }, frames: [[{ ft1: 30 }, .7], [{ ft1: 150 }, .7]] };
+  { const HALF = { t: 150, th1: 70, sh1: -25, th2: 70, sh2: -25, ua1: -45, fa1: -35, ua2: -45, fa2: -35 };
+    const JUMP = { t: 182, th1: -2, sh1: -4, th2: -2, sh2: -4, ft1: 45, ft2: 45, ua1: 115, fa1: 120, ua2: 110, fa2: 115, air: 12 };
+    const LAND = { t: 155, th1: 60, sh1: -22, th2: 60, sh2: -22, ua1: 60, fa1: 80, ua2: 60, fa2: 80 };
+    A['squat jump'] = { anchor: 'A1', ax: 125, hl: ['th1'], frames: [[{}, .8], [{}, .6], [HALF, .15], [HALF, .3], [JUMP, .35], [LAND, .3], [LAND, .6]] }; }
+  { const RL = { x: 34, t: 170, th2: 10, sh2: -6, th1: 40, sh1: 62, ua1: 55, fa1: 70, ua2: -35, fa2: -20 };
+    const AIR = { x: 0, air: 14, t: 180, th1: -12, sh1: -12, th2: 12, sh2: 12, ua1: -30, fa1: -20, ua2: 30, fa2: 20 };
+    A['skater jump'] = { view: 'front', anchor: 'H', ax: 120, reps: 2, hl: ['th2'], frames: [[RL, .5], [RL, .35], [AIR, .35], [mirrorF(RL), .5], [mirrorF(RL), .35], [AIR, .35]] }; }
+  { const UP = { th1: 25, sh1: -5, th2: -28, sh2: -38, ft2: 35, ...HIPS }, DN = { th1: 78, sh1: 0, th2: -5, sh2: -95, ft2: 40, ...HIPS };
+    A['split squat'] = { anchor: 'A1', ax: 150, hl: ['th1'], frames: [[UP, .3], [UP, 3], [DN, .2], [DN, 1]] }; }
+  { const UP = { t: 110, ua1: 0, fa1: 0, ua2: 0, fa2: 0, th1: -70, sh1: -70, ft1: 60, th2: -70, sh2: -70, ft2: 60 };
+    const DN = { t: 102.7, ua1: -75, fa1: 25, ua2: -75, fa2: 25, th1: -77.3, sh1: -77.3, ft1: 80, th2: -77.3, sh2: -77.3, ft2: 80 };
+    A['push-up'] = { anchor: 'W1', ax: 172, hl: ['t'], frames: [[UP, .2], [UP, 1.1], [DN, .2], [DN, 1]] }; }
+  { const LEGS = [[110, 5], [104, 22], [99, 38], [95, 55]];
+    const seq = [[0, 0], [1, 0], [1, 1], [2, 1], [2, 2], [3, 2], [3, 3], [3, 3], [2, 3], [2, 2], [1, 2], [1, 1], [0, 1], [0, 0]];
+    A['hamstring walkout'] = { anchor: 'N', ax: 58, mat: [20, 200], hl: ['th1', 'th2'], frames: seq.map(([i, j]) => [{
+      t: -70 - (i + j) * 1.4, hd: -20 + (i + j) * 1.3, th1: LEGS[i][0], sh1: LEGS[i][1], th2: LEGS[j][0], sh2: LEGS[j][1], ua1: 80, fa1: 88, ua2: 80, fa2: 88 }, .5]) }; }
+  { const UPR = { t: 180, th1: 0, sh1: -90, ft1: -90, th2: 0, sh2: -90, ft2: -90, ua1: 0, fa1: 0, ua2: 0, fa2: 0 };
+    const LEAN = { ...UPR, t: 212, th1: 32, th2: 32, ua1: 32, fa1: 32, ua2: 32, fa2: 32 };
+    A['reverse nordic curl'] = { anchor: 'K1', ax: 150, mat: [90, 90], hl: ['th1'], frames: [[UPR, .3], [UPR, 2.5], [LEAN, .5], [LEAN, 1.7]] }; }
+  { const UPL = { th1: 104, sh1: 104 };
+    A['side-lying hip adduction'] = { view: 'front', anchor: 'H', ax: 100, mat: [20, 200], hl: ['th1', 'sh1'],
+      base: { t: -90, ua1: -90, fa1: -90, ua2: 15, fa2: 0, th1: 90, sh1: 90, ft1: 180, th2: 140, sh2: 40, ft2: 90 },
+      frames: [[{}, .3], [{}, 1], [UPL, .2], [UPL, 1]] }; }
+  { const UPL = { th2: 122, sh2: 122 };
+    A['side-lying hip abduction'] = { view: 'front', anchor: 'H', ax: 100, mat: [20, 200], hl: ['th2', 'sh2'],
+      base: { t: -90, ua1: -90, fa1: -90, ua2: 100, fa2: 100, th1: 90, sh1: 90, ft1: 180, th2: 90, sh2: 90, ft2: 180 },
+      frames: [[{}, .3], [{}, 1], [UPL, .2], [UPL, 1]] }; }
+  A['straight-knee calf raise'] = { anchor: 'toe1', ax: 125, wall: 160, hl: ['sh1'],
+    base: { th1: 0, sh1: 0, th2: -5, sh2: -85, ft2: 0, ua1: 60, fa1: 80, ua2: 60, fa2: 80 },
+    frames: [[{ ft1: 90 }, .3], [{ ft1: 90 }, 1], [{ ft1: 50 }, .7], [{ ft1: 50 }, 1]] };
+  A['bent-knee calf raise'] = { anchor: 'toe1', ax: 130, hl: ['sh1', 'sh2'],
+    base: { t: 168, th1: 35, sh1: -12, th2: 35, sh2: -12, ...HIPS },
+    frames: [[{ ft1: 90, ft2: 90 }, .3], [{ ft1: 90, ft2: 90 }, .9], [{ ft1: 55, ft2: 55 }, .4], [{ ft1: 55, ft2: 55 }, .9]] };
+  A['tibialis raise'] = { anchor: 'heel1', ax: 140, wall: 'back', hl: ['sh1'],
+    base: { t: 190, th1: 22, sh1: 22, th2: 22, sh2: 22, ua1: -10, fa1: -5, ua2: -10, fa2: -5 },
+    frames: [[{}, .2], [{}, .8], [{ ft1: 125, ft2: 125 }, .2], [{ ft1: 125, ft2: 125 }, .8]] };
+  { const DB = { t: -90, ua1: 180, fa1: 180, ua2: 180, fa2: 180, th1: 180, sh1: 90, ft1: 180, th2: 180, sh2: 90, ft2: 180 };
+    const EA = { ...DB, ua1: 265, fa1: 265, th2: 95, sh2: 95 }, EB = { ...DB, ua2: 265, fa2: 265, th1: 95, sh1: 95 };
+    A['dead bug'] = { anchor: 'H', ax: 128, mat: [30, 180], reps: 2, hl: ['t'], frames: [[DB, .2], [DB, 1.2], [EA, .3], [EA, 1.2], [DB, .2], [DB, 1.2], [EB, .3], [EB, 1.2]] }; }
+  { const UP = { t: -103, ua1: 0, fa1: -90, ua2: 180, fa2: 180, th1: 77, sh1: 77, ft1: 167, th2: 77, sh2: 77, ft2: 167 };
+    const UPb = { ...UP, t: -101, th1: 79, sh1: 79, th2: 79, sh2: 79 };
+    A['side plank'] = { view: 'front', anchor: 'E1', ax: 70, mat: [20, 200], hl: ['t'], frames: [[UP, 1.5], [UPb, 1.5]] }; }
+  const prone = (u1, f1) => { const P0 = { ua1: u1, fa1: f1, ua2: -u1, fa2: -f1 }, P1 = { ...P0, lift: 1 };
+    return { view: 'top', anchor: 'H', ax: 120, ay: 92, hl: ['ua1', 'ua2'], base: { th1: -4, sh1: -4, th2: 4, sh2: 4, ft1: 0, ft2: 0 },
+      frames: [[P0, .3], [P0, 1], [P1, 1], [P1, .7]] }; };
+  A['prone y raise'] = prone(-150, -150);
+  A['prone t raise'] = prone(-90, -90);
+  A['prone w raise'] = prone(-55, -165);
+  return A;
+})();
+const animKey = ex => [ex.anim, (ex.en || '').toLowerCase()].find(k => k && ANIMS[k]);
+function animBox(ex, sync) {
+  const k = animKey(ex);
+  return k ? `<svg class="fig" viewBox="0 0 ${VW} ${VH}" data-anim="${esc(k)}" data-tempo="${ex.secs ? '' : (ex.tempo || 3)}"${sync ? ' data-sync="1"' : ''}></svg>` : '';
+}
+function animFrame(now) {
+  document.querySelectorAll('svg[data-anim]').forEach(svg => {
+    const row = svg.closest('.ex');
+    if (row && !row.classList.contains('open')) return;
+    if (P && !svg.closest('#player')) return;
+    const a = ANIMS[svg.dataset.anim], tempo = +svg.dataset.tempo;
+    const speed = tempo ? cycleLen(a) / (tempo * (a.reps || 1)) : 1;
+    let t = now / 1000;
+    if (svg.dataset.sync && P) {
+      const st = P.steps[P.idx];
+      // 与自动计数同步：计数在播报动作名后才开始
+      t = st.type === 'work' && !st.ex.secs && settings.autoCount ? Math.max(0, P.stepT - (settings.voice ? 2.5 : 0)) : P.stepT;
+    }
+    svg.innerHTML = figSVG(a, poseAt(a, t * speed));
+  });
+  requestAnimationFrame(animFrame);
+}
+requestAnimationFrame(animFrame);
+
+/* ================= 训练播放器 ================= */
+let P = null;
+const ICON = {
+  prev: '<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M6 5h2v14H6zM20 5v14L9 12z"/></svg>',
+  next: '<svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M16 5h2v14h-2zM4 5v14l11-7z"/></svg>',
+  pause: '<svg width="28" height="28" viewBox="0 0 24 24" fill="#25212b"><path d="M6 4h4v16H6zM14 4h4v16h-4z"/></svg>',
+  play: '<svg width="28" height="28" viewBox="0 0 24 24" fill="#25212b"><path d="M7 4v16l13-8z"/></svg>',
+};
+
+function startWorkout(id, resume) {
+  const plan = getPlan(id);
+  const mode = resume ? resume.mode : (modes[id] || 'full');
+  const steps = buildSteps(plan, mode);
+  P = { plan, mode, steps, idx: resume ? Math.min(resume.idx, steps.length - 1) : 0,
+        total: resume ? resume.total : 0, kcal: resume ? resume.kcal : 0,
+        running: true, last: performance.now(), stepT: 0, extra: 0, count: 0, doneAt: null, lastSec: null };
+  beep(440, 0.01, 0.001); // 解锁 iOS 音频
+  closeModal();
+  renderPlayer();
+  enterStep();
+  lockOn();
+  P.timer = setInterval(tick, 100);
+}
+function resumeSession() { const s = store.get('session', null); if (s && getPlan(s.planId)) startWorkout(s.planId, s); }
+function saveSession() { if (P) store.set('session', { planId: P.plan.id, mode: P.mode, idx: P.idx, total: P.total, kcal: P.kcal, ts: Date.now() }); }
+
+function renderPlayer() {
+  const el = document.createElement('div');
+  el.className = 'player'; el.id = 'player';
+  el.innerHTML = `
+    <div class="stage" id="stage">
+      <div class="pbar"><i id="pBar"></i></div>
+      <div class="ptitle" id="pTitle"></div>
+      <div class="sidebtns">
+        <button class="rbtn" title="结束" onclick="quitDialog()">✕</button>
+        <button class="rbtn" title="设置" onclick="pause(true);settingsDialog()">⚙︎</button>
+        <button class="rbtn" title="动作列表" onclick="listDialog()">☰</button>
+      </div>
+      <div class="pc" id="pCard"></div>
+    </div>
+    <div class="panel" id="panel">
+      <button class="handle" title="展开" onclick="P.expandAt=P.stepT;setMini(false)"></button>
+      <div class="big"><div><div class="v" id="pVal"></div><div class="l" id="pLab"></div></div><div class="acts" id="pActs"></div></div>
+      <div class="pstats"><div><b id="pTime">00:00</b><span>运动时长</span></div><div><b id="pKcal">0</b><span>预估消耗 (千卡)</span></div></div>
+      <div class="ctrls">
+        <button class="cbtn" onclick="prevStep()" title="上一个">${ICON.prev}</button>
+        <button class="pbtn" id="pPause" onclick="pause(P.running)">${ICON.pause}</button>
+        <button class="cbtn" onclick="nextStep()" title="下一个">${ICON.next}</button>
+      </div>
+    </div>`;
+  document.body.appendChild(el);
+  document.body.style.overflow = 'hidden';
+}
+
+function exCard(st, isNext) {
+  const ex = st.ex, sec = st.sec;
+  const q = encodeURIComponent((ex.en || ex.zh) + (ex.en ? ' exercise' : ''));
+  const qb = encodeURIComponent(ex.zh + ' ' + (ex.en || '') + ' 动作');
+  return `${animBox(ex, !isNext) || `<div class="em">${esc(sec.emoji || '💪')}</div>`}
+    <div class="nm">${esc(ex.zh)}${st.side ? ' · ' + st.side : ''}</div>
+    <div class="en">${esc(ex.en || '')}</div>
+    <div class="meta">${esc(sec.name)}${st.sets > 1 ? ` · 第 ${st.set}/${st.sets} 组` : ''}</div>
+    <div class="presc">${esc(prescription(ex))}${ex.note ? ' · ' + esc(ex.note) : ''}</div>
+    ${ex.cues ? `<ul>${ex.cues.map(c => `<li>${esc(c)}</li>`).join('')}</ul>` : ''}
+    ${ex.muscles ? `<div class="chips">${ex.muscles.map(m => `<span>${esc(m)}</span>`).join('')}</div>` : ''}
+    ${isNext ? '' : `<a class="demo" style="background:#fff" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener" onclick="pause(true)">▶ YouTube 示范</a>
+    <a class="demo" style="background:#fff" href="https://search.bilibili.com/all?keyword=${qb}" target="_blank" rel="noopener" onclick="pause(true)">▶ B站 示范</a>`}`;
+}
+const REST_LABEL = { start: '准备开始', set: '组间休息', switch: '换另一侧', next: '休息一下' };
+
+function renderStep() {
+  const st = P.steps[P.idx];
+  const stage = $('#stage');
+  stage.classList.toggle('rest', st.type === 'rest');
+  if (st.type === 'work') {
+    $('#pTitle').innerHTML = `${st.workNo}/${st.works} ${esc(st.ex.zh)}${st.side ? ' ' + st.side : ''}${st.ex.letter ? `<span class="tg">${esc(st.ex.letter)}</span>` : ''}`;
+    $('#pCard').innerHTML = exCard(st, false);
+    $('#pActs').innerHTML = st.ex.secs ? '' : '<button class="ok" onclick="nextStep()">完成 ✓</button>';
+  } else {
+    const nx = st.nextWork;
+    $('#pTitle').innerHTML = `${nx.workNo}/${nx.works} 下一个：${esc(nx.ex.zh)}${nx.side ? ' ' + nx.side : ''}`;
+    $('#pCard').innerHTML = `<div class="restlbl">${REST_LABEL[st.kind]}${st.kind === 'next' && nx.sec !== (P.steps.slice(0, P.idx).reverse().find(s => s.type === 'work') || {}).sec ? ' · 进入「' + esc(nx.sec.name) + '」' : ''}</div>
+      <div class="nextlbl">下一个动作</div>` + exCard(nx, true);
+    $('#pActs').innerHTML = '<button onclick="P.extra+=10">+10s</button><button class="ok" onclick="nextStep()">跳过</button>';
+  }
+  stage.scrollTop = 0;
+  $('#pBar').style.width = (100 * ((st.type === 'work' ? st.workNo - 1 : st.nextWork.workNo - 1) / st.works)) + '%';
+  updateDyn();
+}
+
+function enterStep() {
+  Object.assign(P, { stepT: 0, extra: 0, count: 0, doneAt: null, lastSec: null, expandAt: 0 });
+  setMini(false);
+  const st = P.steps[P.idx];
+  renderStep();
+  if (st.type === 'work') {
+    beep(990, 0.3);
+    const nmNow = st.ex.zh + (st.side ? '，' + st.side : '');
+    say(nmNow + '，' + (st.ex.secs ? st.ex.secs + '秒，开始' : (st.ex.perSide === 'alt' ? '左右交替，每侧' : '') + repLabel(st.ex).toString().replace('–', '到') + '次，开始'));
+  } else {
+    const nx = st.nextWork, nm = nx.ex.zh + (nx.side ? '，' + nx.side : '');
+    const setTxt = nx.sets > 1 ? `第${nx.set}组，` : '';
+    if (st.kind === 'start') say(`准备开始。第一个动作，${nm}，${setTxt}${nx.ex.secs ? nx.ex.secs + '秒' : ''}`);
+    else if (st.kind === 'switch') say(`换另一侧。${nm}`);
+    else if (st.kind === 'set') say(`休息${st.secs}秒。下一组，${nx.ex.zh}，${setTxt}`);
+    else say(`休息一下。下一个动作，${nm}，${prescription(nx.ex).replace(/×/g, '乘').replace('–', '到')}`);
+  }
+  saveSession();
+}
+
+function tick() {
+  if (!P) return;
+  const now = performance.now();
+  const dt = Math.min((now - P.last) / 1000, 5);
+  P.last = now;
+  if (!P.running) return;
+  P.stepT += dt; P.total += dt;
+  const st = P.steps[P.idx];
+  P.kcal += (st.type === 'work' ? (st.ex.met || 5) : 2) * 3.5 * settings.weight / 200 / 60 * dt;
+  if (st.type === 'rest' || st.ex.secs) {
+    const dur = st.type === 'rest' ? st.secs + P.extra : st.ex.secs;
+    const rem = dur - P.stepT, rc = Math.ceil(rem);
+    if (rc !== P.lastSec) {
+      P.lastSec = rc;
+      if (rc >= 1 && rc <= 3) beep(660, 0.12);
+      if (st.type === 'work' && dur >= 20 && rc === 10) say('还剩10秒');
+      if (st.type === 'work' && dur >= 20 && rc === Math.round(dur / 2) && rc > 10) say('坚持住，已经一半了');
+    }
+    if (rem <= 0) return nextStep(true);
+  } else if (settings.autoCount) {
+    const tgt = target(st.ex), tempo = st.ex.tempo || 3;
+    const lead = settings.voice ? 2.5 : 0; // 先播报动作名，再开始计数
+    const c = Math.min(Math.max(0, Math.floor((P.stepT - lead) / tempo)), tgt);
+    if (c !== P.count) {
+      P.count = c;
+      if (tempo >= 2) say(String(c), false); else beep(520, 0.06);
+    }
+    if (c >= tgt && P.doneAt == null) P.doneAt = P.stepT;
+    if (P.doneAt != null && P.stepT - P.doneAt > 1.2) return nextStep(true);
+  }
+  updateDyn();
+}
+
+const MINI_AFTER = 4; // 秒
+function setMini(on) { const el = $('#panel'); if (el && el.classList.contains('mini') !== on) el.classList.toggle('mini', on); }
+function updateDyn() {
+  if (!P) return;
+  setMini(P.running && P.stepT - P.expandAt > MINI_AFTER);
+  const st = P.steps[P.idx];
+  let v, l;
+  if (st.type === 'rest') { v = Math.max(0, Math.ceil(st.secs + P.extra - P.stepT)) + '″'; l = REST_LABEL[st.kind]; }
+  else if (st.ex.secs) { v = Math.max(0, Math.ceil(st.ex.secs - P.stepT)) + '″'; l = '计时' + (st.side ? ' · ' + st.side : ''); }
+  else if (settings.autoCount) {
+    v = P.count + `<small> / ${target(st.ex)}</small>`;
+    l = st.ex.perSide === 'alt' ? `左右交替（每侧 ${repLabel(st.ex)}）` : Array.isArray(st.ex.reps) ? `目标 ${repLabel(st.ex)} 次，够了可点完成` : '次';
+  } else { v = '×' + repLabel(st.ex); l = (st.ex.perSide === 'alt' ? '每侧 · 左右交替' : '次') + '，完成后点"完成"'; }
+  $('#pVal').innerHTML = v;
+  $('#pLab').textContent = P.running ? l : '已暂停';
+  $('#pTime').textContent = fmt(P.total);
+  $('#pKcal').textContent = Math.round(P.kcal);
+}
+
+function pause(on) {
+  if (!P) return;
+  P.running = !on; P.last = performance.now();
+  $('#pPause').innerHTML = P.running ? ICON.pause : ICON.play;
+  if (on) { try { speechSynthesis.cancel(); } catch (e) {} } else lockOn();
+  updateDyn();
+}
+function nextStep() {
+  if (!P) return;
+  if (P.idx >= P.steps.length - 1) return finish();
+  P.idx++; enterStep();
+}
+function prevStep() {
+  if (!P) return;
+  const st = P.steps[P.idx];
+  if (st.type === 'work' && P.stepT > 3) return enterStep();
+  for (let i = P.idx - 1; i >= 0; i--) if (P.steps[i].type === 'work') { P.idx = i; return enterStep(); }
+  enterStep();
+}
+function jumpTo(i) {
+  closeModal();
+  P.idx = (i > 0 && P.steps[i - 1].type === 'rest' && i - 1 !== P.idx) ? i - 1 : i;
+  if (!P.running) pause(false);
+  enterStep();
+}
+function listDialog() {
+  let lastSec = null;
+  modal(`<h3>动作列表</h3><div class="lst">${P.steps.map((s, i) => {
+    if (s.type !== 'work') return '';
+    const cur = P.steps[P.idx].type === 'work' ? P.idx === i : P.steps[P.idx].nextWork === s;
+    const gh = s.sec !== lastSec ? `<div class="gh">${esc(s.sec.name)}</div>` : '';
+    lastSec = s.sec;
+    return gh + `<div class="it ${cur ? 'cur' : i < P.idx ? 'past' : ''}" onclick="jumpTo(${i})"><span>${s.workNo}. ${esc(s.ex.zh)}${s.side ? ' · ' + s.side : ''}</span>
+      <span class="muted">${s.sets > 1 ? s.set + '/' + s.sets + '组 · ' : ''}${esc(amount(s.ex))}</span></div>`;
+  }).join('')}</div>`);
+  setTimeout(() => { const c = document.querySelector('.lst .cur'); c && c.scrollIntoView({ block: 'center' }); }, 30);
+}
+function quitDialog() {
+  pause(true);
+  modal(`<h3>暂停中</h3><div class="muted">已练 ${fmt(P.total)} · ${P.steps[P.idx].workNo || P.steps[P.idx].nextWork.workNo}/${P.steps[0].works} 个动作</div>
+    <button class="btn pri" onclick="closeModal();pause(false)">继续训练</button>
+    <button class="btn" onclick="closePlayer(true)">保存进度，稍后继续</button>
+    <button class="btn" onclick="finish()">结束并记录本次训练</button>
+    <button class="btn danger" onclick="if(confirm('放弃本次训练？不会记录。'))closePlayer(false)">放弃本次训练</button>`);
+}
+function closePlayer(keep) {
+  if (!P) return;
+  clearInterval(P.timer);
+  if (keep) saveSession(); else store.del('session');
+  P = null; lockOff();
+  try { speechSynthesis.cancel(); } catch (e) {}
+  closeModal();
+  const el = $('#player'); el && el.remove();
+  document.body.style.overflow = '';
+  route();
+}
+function finish() {
+  closeModal();
+  clearInterval(P.timer);
+  P.timer = null;
+  P.running = false;
+  const st = P.steps[P.idx];
+  const doneWorks = st.type === 'work' ? st.workNo : st.nextWork.workNo - 1;
+  const complete = P.idx >= P.steps.length - 1;
+  P.result = { ts: Date.now(), planId: P.plan.id, title: P.plan.title, mode: P.mode, secs: Math.round(P.total), kcal: Math.round(P.kcal), works: complete ? st.works : doneWorks, of: st.works, rpe: 0 };
+  store.del('session');
+  beep(990, 0.5);
+  say(complete ? '训练完成，辛苦了' : '本次训练已结束');
+  $('#player').innerHTML = `<div class="done" style="overflow:auto;height:100%;background:#fff">
+    <div class="em">🎉</div><h2>${complete ? '训练完成！' : '已结束训练'}</h2>
+    <div class="muted">${esc(P.plan.title)}${P.mode === 'lite' ? '（精简版）' : ''}</div>
+    <div class="grid"><div><b>${fmt(P.result.secs)}</b><span class="muted">时长</span></div>
+      <div><b>${P.result.kcal}</b><span class="muted">千卡(估算)</span></div>
+      <div><b>${P.result.works}/${P.result.of}</b><span class="muted">动作</span></div></div>
+    <div style="font-weight:700">这次感觉多累？(RPE 1–10)</div>
+    <div class="muted" style="font-size:13px">${esc(P.plan.rpe || '')}</div>
+    <div class="rpe">${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map(n => `<button onclick="P.result.rpe=${n};document.querySelectorAll('.rpe button').forEach(b=>b.classList.toggle('on',+b.textContent===${n}))">${n}</button>`).join('')}</div>
+    <button class="btn pri" onclick="saveResult()">保存记录</button>
+    <button class="btn" onclick="closePlayer(false)">不保存</button></div>`;
+}
+function saveResult() {
+  const h = store.get('history', []); h.push(P.result); store.set('history', h);
+  closePlayer(false);
+}
+
+/* 键盘：空格暂停，←/→ 上一个/下一个 */
+document.addEventListener('keydown', e => {
+  if (!P || $('#mask') || !P.timer) return;
+  if (e.code === 'Space') { e.preventDefault(); pause(P.running); }
+  else if (e.code === 'ArrowRight') nextStep();
+  else if (e.code === 'ArrowLeft') prevStep();
+});
+
+route();
+</script>
+</body>
+</html>
