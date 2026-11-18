@@ -309,12 +309,49 @@ if ('speechSynthesis' in window) {
 function say(text, interrupt = true) {
   if (!settings.voice || !('speechSynthesis' in window) || noZhVoice()) return;
   try {
-    if (interrupt) speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     if (zhVoice) { u.voice = zhVoice; u.lang = zhVoice.lang; } else u.lang = 'zh-CN';
     u.rate = 1.05;
-    speechSynthesis.speak(u);
+    // iOS Safari：cancel() 后立刻 speak() 会被吞掉，所以只在确实在说话时才打断，并稍等再说
+    if (interrupt && (speechSynthesis.speaking || speechSynthesis.pending)) {
+      speechSynthesis.cancel();
+      setTimeout(() => speechSynthesis.speak(u), 120);
+    } else speechSynthesis.speak(u);
+    if (speechSynthesis.paused) speechSynthesis.resume();
   } catch (e) {}
+}
+
+/* iOS：让网页声音不受静音开关影响，并在用户点击时解锁音频 */
+let audioUnlocked = false;
+function unlockAudio() {
+  try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch (e) {}
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    if (actx.state !== 'running') actx.resume();
+  } catch (e) {}
+  if (audioUnlocked) return;
+  audioUnlocked = true;
+  try { // 旧版 iOS：先播放一段无声 <audio>，把音频会话切换为"播放"模式
+    const n = 4410, b = new ArrayBuffer(44 + n * 2), v = new DataView(b), w = (o, str) => [...str].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+    w(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); w(8, 'WAVEfmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+    v.setUint32(24, 44100, true); v.setUint32(28, 88200, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true); w(36, 'data'); v.setUint32(40, n * 2, true);
+    const a = new Audio(URL.createObjectURL(new Blob([b], { type: 'audio/wav' })));
+    a.setAttribute('playsinline', ''); a.play().catch(() => {});
+  } catch (e) {}
+  try { // 用一次真实的点击来"激活"语音合成
+    const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u);
+  } catch (e) {}
+}
+document.addEventListener('touchend', unlockAudio, { passive: true });
+document.addEventListener('click', unlockAudio);
+function soundTest() {
+  unlockAudio();
+  beep(880, 0.15); setTimeout(() => beep(990, 0.3), 250);
+  const o = settings.voice; settings.voice = true;
+  if (!('speechSynthesis' in window)) alert('此浏览器不支持语音合成');
+  else if (noZhVoice()) alert('此浏览器没有中文语音');
+  else setTimeout(() => say('声音测试。分腿蹲，左侧，8次，开始'), 600);
+  settings.voice = o;
 }
 
 /* 屏幕常亮 */
@@ -436,12 +473,13 @@ function settingsDialog() {
   const sw = (k, label, sub) => `<div class="opt-row"><div>${label}${sub ? `<div class="muted" style="font-size:12px">${sub}</div>` : ''}</div>
     <button class="sw ${settings[k] ? 'on' : ''}" onclick="settings['${k}']=!settings['${k}'];saveSettings();this.classList.toggle('on')"></button></div>`;
   modal(`<h3>训练设置</h3>
+    <button class="btn" style="margin:0 0 6px" onclick="soundTest()">🔊 声音测试（应听到两声"嘀"和一句中文）</button>
     ${sw('voice', '语音播报', '动作名、计数、休息提示（iPhone 请关闭静音开关）')}
     <div class="opt-row"><div>播报声音<div class="muted" style="font-size:12px">${voiceList.some(isZh) ? '已找到中文语音' : '<span style="color:#e5484d">此浏览器没有中文语音</span>'}</div></div>
       <div style="display:flex;gap:8px;align-items:center"><select style="width:150px" onchange="settings.voiceName=this.value;saveSettings();pickVoice()">
         <option value="">自动（中文）</option>
         ${voiceList.slice().sort((a, b) => isZh(b) - isZh(a)).map(v => `<option value="${esc(v.name)}" ${settings.voiceName === v.name ? 'selected' : ''}>${isZh(v) ? '🇨🇳 ' : ''}${esc(v.name)} (${esc(v.lang)})</option>`).join('')}
-      </select><button class="btn-sm" onclick="const o=settings.voice;settings.voice=true;say('分腿蹲，左侧，8次，开始');settings.voice=o">试听</button></div></div>
+      </select><button class="btn-sm" onclick="soundTest()">试听</button></div></div>
     ${noZhVoice() ? `<div class="note warn" style="font-size:13px">没有中文语音，所以不会播报，只有提示音。请用 Chrome / Edge / Safari，或在系统里安装中文语音：<br>
       · Windows：设置 → 时间和语言 → 语音 → 添加语音 → 中文(简体)，然后重启浏览器<br>
       · Mac：系统设置 → 辅助功能 → 朗读内容 → 系统声音 → 管理声音 → 中文<br>
@@ -708,7 +746,7 @@ function startWorkout(id, resume) {
   P = { plan, mode, steps, idx: resume ? Math.min(resume.idx, steps.length - 1) : 0,
         total: resume ? resume.total : 0, kcal: resume ? resume.kcal : 0,
         running: true, last: performance.now(), stepT: 0, extra: 0, count: 0, doneAt: null, lastSec: null };
-  beep(440, 0.01, 0.001); // 解锁 iOS 音频
+  unlockAudio(); // 解锁 iOS 音频（必须在点击 GO 时同步执行）
   closeModal();
   renderPlayer();
   enterStep();
