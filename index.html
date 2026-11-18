@@ -338,20 +338,30 @@ function unlockAudio() {
     const a = new Audio(URL.createObjectURL(new Blob([b], { type: 'audio/wav' })));
     a.setAttribute('playsinline', ''); a.play().catch(() => {});
   } catch (e) {}
-  try { // 用一次真实的点击来"激活"语音合成
-    const u = new SpeechSynthesisUtterance(' '); u.volume = 0; speechSynthesis.speak(u);
-  } catch (e) {}
 }
 document.addEventListener('touchend', unlockAudio, { passive: true });
 document.addEventListener('click', unlockAudio);
 function soundTest() {
   unlockAudio();
-  beep(880, 0.15); setTimeout(() => beep(990, 0.3), 250);
-  const o = settings.voice; settings.voice = true;
-  if (!('speechSynthesis' in window)) alert('此浏览器不支持语音合成');
-  else if (noZhVoice()) alert('此浏览器没有中文语音');
-  else setTimeout(() => say('声音测试。分腿蹲，左侧，8次，开始'), 600);
-  settings.voice = o;
+  beep(880, 0.15);
+  const st = $('#sndStat'), show = t => { if (st) st.textContent = t; };
+  if (!('speechSynthesis' in window)) return show('此浏览器不支持语音合成');
+  pickVoice();
+  const zh = voiceList.filter(isZh).map(v => v.name);
+  let info = `语音数 ${voiceList.length}，中文 ${zh.length}（${zh.join('、') || '无'}），使用：${zhVoice ? zhVoice.name : '系统默认'}`;
+  show(info + '\n状态：请求播放…');
+  try {
+    // 必须在点击中同步调用 speak()，iOS 才允许播放
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance('声音测试。分腿蹲，左侧，8次，开始');
+    if (zhVoice) { u.voice = zhVoice; u.lang = zhVoice.lang; } else u.lang = 'zh-CN';
+    let started = false;
+    u.onstart = () => { started = true; show(info + '\n状态：✅ 正在播放'); };
+    u.onend = () => show(info + '\n状态：' + (started ? '✅ 播放完成' : '⚠ 结束但未开始（可能被系统拦截）'));
+    u.onerror = e => show(info + '\n状态：❌ 错误 ' + (e.error || ''));
+    speechSynthesis.speak(u);
+    setTimeout(() => { if (!started) show(info + '\n状态：⚠ 3 秒内没有开始播放' + (speechSynthesis.speaking ? '（speaking=true）' : '') + (speechSynthesis.pending ? '（pending=true）' : '')); }, 3000);
+  } catch (e) { show(info + '\n状态：❌ ' + e.message); }
 }
 
 /* 屏幕常亮 */
@@ -473,7 +483,8 @@ function settingsDialog() {
   const sw = (k, label, sub) => `<div class="opt-row"><div>${label}${sub ? `<div class="muted" style="font-size:12px">${sub}</div>` : ''}</div>
     <button class="sw ${settings[k] ? 'on' : ''}" onclick="settings['${k}']=!settings['${k}'];saveSettings();this.classList.toggle('on')"></button></div>`;
   modal(`<h3>训练设置</h3>
-    <button class="btn" style="margin:0 0 6px" onclick="soundTest()">🔊 声音测试（应听到两声"嘀"和一句中文）</button>
+    <button class="btn" style="margin:0 0 6px" onclick="soundTest()">🔊 声音测试（应听到"嘀"和一句中文）</button>
+    <div id="sndStat" class="muted" style="font-size:12px;white-space:pre-wrap;margin-bottom:6px"></div>
     ${sw('voice', '语音播报', '动作名、计数、休息提示（iPhone 请关闭静音开关）')}
     <div class="opt-row"><div>播报声音<div class="muted" style="font-size:12px">${voiceList.some(isZh) ? '已找到中文语音' : '<span style="color:#e5484d">此浏览器没有中文语音</span>'}</div></div>
       <div style="display:flex;gap:8px;align-items:center"><select style="width:150px" onchange="settings.voiceName=this.value;saveSettings();pickVoice()">
